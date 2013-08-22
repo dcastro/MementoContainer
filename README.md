@@ -20,7 +20,6 @@ catch(FormattingException)
 ```
 
 ## Getting started
-==============
 
 ### Registering objects
 
@@ -41,6 +40,7 @@ public class Article
 ```
 
 In order to preserve encapsulation, these properties can have any access modifiers (private, public, protected) and even be static.
+And if the class `Photo` also happens to have annotated properties, those will be registered as well!
 
 Alternatively, you may also use the `MementoClass` attribute on your classes or interfaces.
 This way, all your object's properties will be recorded, provided they implement both get and set accessors.
@@ -94,8 +94,11 @@ var memento = Memento.Create()
 
 
 ## NuGet
-MementoContainer will soon be available in the NuGet repository!
+To install MementoContainer, run the following command in the Package Manager Console
 
+```
+PM> Install-Package MementoContainer
+```
 
 ## Depency Injection and Mocking
 The IMemento interface is available so that you can easily mock it with tools like [Moq](https://code.google.com/p/moq/) in your unit tests and inject it as a depency using your favourite IoC container (e.g., [Castle Windsor](http://docs.castleproject.org/Windsor.MainPage.ashx) or [Ninject](http://www.ninject.org/)).
