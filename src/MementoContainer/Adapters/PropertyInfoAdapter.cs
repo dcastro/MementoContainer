@@ -21,8 +21,8 @@ namespace MementoContainer.Adapters
 
         public bool IsStatic()
         {
-            return (_property.CanRead && _property.GetGetMethod(true).IsStatic) ||
-                   (_property.CanWrite && _property.GetSetMethod(true).IsStatic);
+            return (_property.CanRead && _property.GetMethod.IsStatic) ||
+                   (_property.CanWrite && _property.SetMethod.IsStatic);
         }
 
         public object GetValue(object owner)

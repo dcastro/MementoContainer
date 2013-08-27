@@ -66,11 +66,10 @@ namespace MementoContainer.Utils
         public IList<IPropertyAdapter> GetProperties(object obj)
         {
             Type type = obj.GetType();
-            var props = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic |
-                            BindingFlags.Instance | BindingFlags.Static);
+            var props = type.GetTypeInfo().DeclaredProperties;
 
             //Return all valid properties
-            if (type.IsDefined(typeof(MementoClassAttribute)))
+            if (type.GetTypeInfo().IsDefined(typeof(MementoClassAttribute)))
             {
                 var validProps = props.Where(p => p.HasGetAndSet()).ToList();
                 return WrapProperties(validProps);
