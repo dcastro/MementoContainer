@@ -51,7 +51,7 @@
     <Compile Include="StaticMock.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MementoContainer\MementoContainer.csproj">
+    <ProjectReference Include="..\..\src\MementoContainer\MementoContainer.csproj">
       <Project>{50aa9cd8-f9e7-4173-bcb3-2c8ea106824a}</Project>
       <Name>MementoContainer</Name>
     </ProjectReference>

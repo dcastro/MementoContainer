@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MementoContainer", "MementoContainer\MementoContainer.csproj", "{50AA9CD8-F9E7-4173-BCB3-2C8EA106824A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MementoContainer", "src\MementoContainer\MementoContainer.csproj", "{50AA9CD8-F9E7-4173-BCB3-2C8EA106824A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MementoContainer.Unit", "MementoContainer.Unit\MementoContainer.Unit.csproj", "{B65F499A-D384-4256-B5EF-6D010E13D74F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MementoContainer.Unit", "test\MementoContainer.Unit\MementoContainer.Unit.csproj", "{B65F499A-D384-4256-B5EF-6D010E13D74F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MementoContainer.Mocks", "MementoContainer.Mocks\MementoContainer.Mocks.csproj", "{7D1471AA-235B-4ABA-B7ED-8AB17AB600D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MementoContainer.Mocks", "test\MementoContainer.Mocks\MementoContainer.Mocks.csproj", "{7D1471AA-235B-4ABA-B7ED-8AB17AB600D2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{8169EB67-2D42-472B-B90C-3642AB43A5C1}"
 	ProjectSection(SolutionItems) = preProject
