@@ -51,6 +51,9 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="ObjectFeature\AnnotatedObject.cs" />
+    <Compile Include="ObjectFeature\AnnotatedProperties.cs" />
+    <Compile Include="ObjectFeature\NonPublicProperties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -62,6 +65,7 @@
       <Name>MementoContainer</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
