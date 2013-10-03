@@ -19,5 +19,6 @@ It is a lightweight utility that keeps a record of your objects' properties so t
     <files>
         <file src="..\src\MementoContainer\bin\Release\MementoContainer.dll" target="lib\portable-net45+win8\MementoContainer.dll" />
         <file src="..\src\MementoContainer\bin\Release\MementoContainer.pdb" target="lib\portable-net45+win8\MementoContainer.pdb" />
+        <file src="..\src\MementoContainer\bin\Release\MementoContainer.XML" target="lib\portable-net45+win8\MementoContainer.XML" />
     </files>
 </package>
