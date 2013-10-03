@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{8169EB
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MementoContainer.Integration", "test\MementoContainer.Integration\MementoContainer.Integration.csproj", "{45CE7ECD-4C2A-476C-9F97-9BEC5772892D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{7D1471AA-235B-4ABA-B7ED-8AB17AB600D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D1471AA-235B-4ABA-B7ED-8AB17AB600D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D1471AA-235B-4ABA-B7ED-8AB17AB600D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45CE7ECD-4C2A-476C-9F97-9BEC5772892D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45CE7ECD-4C2A-476C-9F97-9BEC5772892D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45CE7ECD-4C2A-476C-9F97-9BEC5772892D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45CE7ECD-4C2A-476C-9F97-9BEC5772892D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
