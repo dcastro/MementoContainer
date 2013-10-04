@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MementoContainer.Attributes;
+﻿using MementoContainer.Attributes;
 using NUnit.Framework;
 
-namespace MementoContainer.Integration.ObjectFeature
+namespace MementoContainer.Integration.RegisterObjectFeature
 {
     [TestFixture]
     public class NonPublicProperties
