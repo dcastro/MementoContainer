@@ -55,6 +55,7 @@
     <Compile Include="RegisterObjectFeature\AnnotatedProperties.cs" />
     <Compile Include="RegisterObjectFeature\NonPublicProperties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegisterPropertiesFeature\ConvertExpressions.cs" />
     <Compile Include="RegisterPropertiesFeature\InterfaceProperties.cs" />
     <Compile Include="RegisterPropertiesFeature\OverridenProperties.cs" />
     <Compile Include="RegisterPropertiesFeature\RegularProperties.cs" />

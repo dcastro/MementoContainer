@@ -26,41 +26,75 @@ namespace MementoContainer.Utils
         {
             var props = new List<PropertyInfo>();
 
-            while(expression != null && expression.NodeType == ExpressionType.MemberAccess)
+            while (expression != null)
             {
+                //validate expression
+                bool isDoneAnalyzing;
+                ValidateExpression(ref expression, hasParameter, out isDoneAnalyzing);
+
+                if(isDoneAnalyzing)
+                    break;
+
                 var memberExp = expression as MemberExpression;
-
-                if(memberExp.Member is FieldInfo)
-                    throw InvalidExpressionException.FieldFound;
-
                 var prop = memberExp.Member as PropertyInfo;
+
                 props.Insert(0, prop);
 
                 expression = memberExp.Expression;
             }
 
-            //If the expression has no parameters (i.e., should begin with a static property)
-            //then the whole expression should have been consumed (i.e., expression == null).
-            //If the expression has a parameter (i.e., should map to an instance property)
+            //If the expression has a parameter (i.e., should map to an object's property)
             //then the remaining expression must contain the parameter.
-            if (expression != null)
-            {
-                switch (expression.NodeType)
-                {
-                    case ExpressionType.Parameter:
-                        if (! hasParameter)
-                            throw InvalidExpressionException.UnexpectedOperation;
-                        break;
-                    case ExpressionType.Call:
-                        throw InvalidExpressionException.MethodFound;
-                    default:
-                        throw InvalidExpressionException.UnexpectedOperation;
-                }
-            }
-            else if (hasParameter)
+            if (hasParameter && expression == null)
                 throw InvalidExpressionException.UnexpectedOperation;
 
             return ValidateProperties(props);
+        }
+
+        /// <summary>
+        /// Validates an expression and returns whether the expression has been fully analyzed
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="hasParameter"></param>
+        /// <param name="isDoneAnalyzing"></param>
+        private void ValidateExpression(ref Expression expression, bool hasParameter, out bool isDoneAnalyzing)
+        {
+            isDoneAnalyzing = false;
+
+            //validate node type
+            switch (expression.NodeType)
+            {
+                case ExpressionType.MemberAccess:
+                    break;
+                case ExpressionType.Convert:
+                case ExpressionType.ConvertChecked:
+                    var unaryExpression = expression as UnaryExpression;
+                    expression = ((unaryExpression != null) ? unaryExpression.Operand : null);
+                    break;
+                case ExpressionType.Parameter:
+                    if (hasParameter)
+                        isDoneAnalyzing = true;
+                    else
+                        throw InvalidExpressionException.UnexpectedOperation;
+                    break;
+                case ExpressionType.Call:
+                    throw InvalidExpressionException.MethodFound;
+                default:
+                    throw InvalidExpressionException.UnexpectedOperation;
+            }
+
+            //further validation is needed
+            if (!isDoneAnalyzing)
+            {
+                //validate expression type
+                if (!(expression is MemberExpression))
+                    throw InvalidExpressionException.UnexpectedOperation;
+
+                //validate member type
+                var memberExp = expression as MemberExpression;
+                if (memberExp.Member is FieldInfo)
+                    throw InvalidExpressionException.FieldFound;
+            }
         }
 
         public IList<IPropertyAdapter> GetProperties(object obj)
@@ -91,7 +125,7 @@ namespace MementoContainer.Utils
 
             foreach (var prop in properties)
             {
-                if(! prop.HasGetAndSet())
+                if (!prop.HasGetAndSet())
                     throw new PropertyException(prop);
                 adapters.Add(new PropertyInfoAdapter(prop));
             }
