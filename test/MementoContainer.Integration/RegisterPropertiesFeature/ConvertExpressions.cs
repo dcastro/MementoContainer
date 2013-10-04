@@ -31,6 +31,27 @@ namespace MementoContainer.Integration.RegisterPropertiesFeature
             Assert.AreEqual("DCastro", ((Person)article.Author).Name);
         }
 
+        [Test]
+        public void TestTypeAsConversion()
+        {
+            var article = new Article
+            {
+                Author = new Person
+                {
+                    Name = "DCastro"
+                }
+            };
+
+            var memento = Memento.Create()
+                                 .RegisterProperty(article, a => (a.Author as Person).Name);
+
+            ((Person)article.Author).Name = "No one";
+
+            memento.Restore();
+
+            Assert.AreEqual("DCastro", ((Person)article.Author).Name);
+        }
+
         private class Article
         {
             public IPerson Author { get; set; }

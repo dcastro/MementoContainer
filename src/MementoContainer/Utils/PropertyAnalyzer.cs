@@ -66,6 +66,7 @@ namespace MementoContainer.Utils
             {
                 case ExpressionType.MemberAccess:
                     break;
+                case ExpressionType.TypeAs:
                 case ExpressionType.Convert:
                 case ExpressionType.ConvertChecked:
                     var unaryExpression = expression as UnaryExpression;
