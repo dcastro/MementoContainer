@@ -9,37 +9,27 @@ using NUnit.Framework;
 namespace MementoContainer.Integration.RegisterObjectFeature
 {
     [TestFixture]
-    public class InterfaceAnnotatedProperties
+    public class GenericClass
     {
         [Test]
         public void Test()
         {
-            IArticle article = new Article { Title = "Draft", Id = 1};
+            Article<string> article = new Article<string> { Title = "Draft" };
 
             var memento = Memento.Create()
                                  .Register(article);
 
-            (article as Article).Title = "Something else";
-            (article as Article).Id = 2;
+            article.Title = "Something else";
 
             memento.Restore();
 
             Assert.AreEqual("Draft", article.Title);
-            Assert.AreEqual(1, (article as Article).Id);
         }
 
-        private interface IArticle
+        private class Article<T>
         {
             [MementoProperty]
-            string Title { get; }
-        }
-
-        private class Article : IArticle
-        {
-            public string Title { get; set; }
-
-            [MementoProperty]
-            public int? Id { get; set; }
+            public T Title { get; set; }
         }
     }
 }

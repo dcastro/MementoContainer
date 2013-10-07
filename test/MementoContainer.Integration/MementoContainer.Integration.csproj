@@ -53,6 +53,8 @@
   <ItemGroup>
     <Compile Include="RegisterObjectFeature\AnnotatedObject.cs" />
     <Compile Include="RegisterObjectFeature\AnnotatedProperties.cs" />
+    <Compile Include="RegisterObjectFeature\GenericClass.cs" />
+    <Compile Include="RegisterObjectFeature\GenericInterface.cs" />
     <Compile Include="RegisterObjectFeature\InterfaceAnnotatedProperties.cs" />
     <Compile Include="RegisterObjectFeature\NonPublicProperties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
