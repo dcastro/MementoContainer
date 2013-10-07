@@ -35,12 +35,12 @@ public class Article
    public DateTime? ReleaseDate { get; set; }
 
    [MementoProperty]
-   public IList<Photo> Photos { get; set; }
+   public Person Author { get; set; }
 }
 ```
 
 In order to preserve encapsulation, these properties can have any access modifiers (private, public, protected) and even be static.
-And if the class `Photo` also happens to have annotated properties, those will be registered as well!
+And if the class `Person` also happens to have annotated properties, those will be registered as well!
 
 Alternatively, you may also use the `MementoClass` attribute on your classes or interfaces.
 This way, all your object's properties will be recorded, provided they implement both get and set accessors.
@@ -57,7 +57,7 @@ public class Magazine
 The Memento object exposes a [fluent interface](http://www.martinfowler.com/bliki/FluentInterface.html) so that you can easily register all your objects with the container.
 
 ```csharp
-var article = new Article("Draft", null, photos);
+var article = new Article("Draft", null, author);
 
 var memento = Memento.Create()
                         .Register(article)
