@@ -51,6 +51,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="RegisterObjectFeature\DeepHierarchy.cs" />
     <Compile Include="RegisterObjectFeature\InheritedProperties.cs" />
     <Compile Include="RegisterObjectFeature\AnnotatedObject.cs" />
     <Compile Include="RegisterObjectFeature\AnnotatedProperties.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="RegisterObjectFeature\NonPublicProperties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegisterPropertiesFeature\ConvertExpressions.cs" />
+    <Compile Include="RegisterPropertiesFeature\DeepHierarchy.cs" />
     <Compile Include="RegisterPropertiesFeature\InterfaceProperties.cs" />
     <Compile Include="RegisterPropertiesFeature\OverridenProperties.cs" />
     <Compile Include="RegisterPropertiesFeature\RegularProperties.cs" />
