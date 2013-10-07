@@ -104,11 +104,11 @@ namespace MementoContainer.Utils
             var props = typeInfo.DeclaredProperties;
 
             //check if type has MementoClassAttribute
-            bool isMementoClass;
-            var validProps = LookupProperties(typeInfo, out isMementoClass);
-
-            if (isMementoClass)
-                return WrapProperties(validProps);
+            if (IsMementoClass(typeInfo))
+            {
+                return WrapProperties(
+                    LookupProperties(typeInfo, true));
+            }
 
             //lookup properties in the type's interfaces
             var interfaces = typeInfo.ImplementedInterfaces;
@@ -122,10 +122,17 @@ namespace MementoContainer.Utils
             return ValidateProperties(annotatedProps);
         }
 
+        private bool IsMementoClass(TypeInfo typeInfo)
+        {
+            return typeInfo.IsDefined(typeof (MementoClassAttribute));
+        }
+
         private IList<PropertyInfo> LookupProperties(Type type)
         {
-            bool unused;
-            return LookupProperties(type.GetTypeInfo(), out unused);
+            TypeInfo typeinfo = type.GetTypeInfo();
+            if (IsMementoClass(typeinfo))
+                return LookupProperties(typeinfo, true);
+            return LookupProperties(typeinfo, false);
         }
 
         /// <summary>
@@ -136,18 +143,16 @@ namespace MementoContainer.Utils
         /// <param name="typeInfo"></param>
         /// <param name="isMementoClass"></param>
         /// <returns></returns>
-        private IList<PropertyInfo> LookupProperties(TypeInfo typeInfo, out bool isMementoClass)
+        private IList<PropertyInfo> LookupProperties(TypeInfo typeInfo, bool isMementoClass)
         {
             IList<PropertyInfo> props;
 
-            if (typeInfo.IsDefined(typeof(MementoClassAttribute)))
+            if (isMementoClass)
             {
-                isMementoClass = true;
                 props = typeInfo.DeclaredProperties.Where(p => p.HasGetAndSet()).ToList();
             }
             else
             {
-                isMementoClass = false;
                 props = typeInfo.DeclaredProperties.Where(p => p.IsDefined(typeof(MementoPropertyAttribute))).ToList();
             }
 
