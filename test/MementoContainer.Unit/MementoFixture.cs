@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using MementoContainer.Factories;
-using MementoContainer.Mocks;
 using Moq;
 using NUnit.Framework;
 
@@ -28,9 +27,9 @@ namespace MementoContainer.Unit
         {
             Assert.Throws<ArgumentNullException>(() =>Memento.Create().Register(null));
 
-            Assert.Throws<ArgumentNullException>(() => Memento.Create().RegisterProperty(null, (SimpleMock m) => m.Property));
+            Assert.Throws<ArgumentNullException>(() => Memento.Create().RegisterProperty(null, (String str) => str.Length));
 
-            Assert.Throws<ArgumentNullException>(() => Memento.Create().RegisterProperty<SimpleMock, object>(new SimpleMock(), null));
+            Assert.Throws<ArgumentNullException>(() => Memento.Create().RegisterProperty<String, object>("", null));
 
             Assert.Throws<ArgumentNullException>(() => Memento.Create().RegisterProperty<object>(null));
         }

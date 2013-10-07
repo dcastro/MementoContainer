@@ -13,16 +13,16 @@ namespace MementoContainer.Integration.RegisterStaticPropertiesFeature
         [Test]
         public void Test()
         {
-            Article.Count = new Count {Number = 1};
+            Article.Count = new Count {Views = 1};
 
             var memento = Memento.Create()
-                                 .RegisterProperty(() => Article.Count.Number);
+                                 .RegisterProperty(() => Article.Count.Views);
 
-            Article.Count.Number++;
+            Article.Count.Views++;
 
             memento.Restore();
 
-            Assert.AreEqual(1, Article.Count.Number);
+            Assert.AreEqual(1, Article.Count.Views);
         }
 
         private static class Article
@@ -32,8 +32,7 @@ namespace MementoContainer.Integration.RegisterStaticPropertiesFeature
 
         private class Count
         {
-            public int Number { get; set; }
-            public DateTime LastUpdated { get; set; }
+            public int Views { get; set; }
         }
     }
 }
