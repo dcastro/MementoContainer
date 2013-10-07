@@ -51,6 +51,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="RegisterObjectFeature\InheritedProperties.cs" />
     <Compile Include="RegisterObjectFeature\AnnotatedObject.cs" />
     <Compile Include="RegisterObjectFeature\AnnotatedProperties.cs" />
     <Compile Include="RegisterObjectFeature\GenericClass.cs" />

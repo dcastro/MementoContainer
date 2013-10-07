@@ -100,8 +100,10 @@ namespace MementoContainer.Utils
 
         public IList<IPropertyAdapter> GetProperties(object obj)
         {
-            TypeInfo typeInfo = obj.GetType().GetTypeInfo();
-            var props = typeInfo.DeclaredProperties;
+            Type type = obj.GetType();
+            TypeInfo typeInfo = type.GetTypeInfo();
+            var props = type.GetRuntimeProperties();
+            
 
             //check if type has MementoClassAttribute
             if (IsMementoClass(typeInfo))
