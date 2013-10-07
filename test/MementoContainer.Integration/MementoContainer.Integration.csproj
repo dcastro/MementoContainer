@@ -60,12 +60,15 @@
     <Compile Include="RegisterObjectFeature\InterfaceAnnotatedProperties.cs" />
     <Compile Include="RegisterObjectFeature\NonPublicProperties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegisterObjectFeature\StaticProperties.cs" />
     <Compile Include="RegisterPropertiesFeature\ConvertExpressions.cs" />
     <Compile Include="RegisterPropertiesFeature\DeepHierarchy.cs" />
     <Compile Include="RegisterPropertiesFeature\InterfaceProperties.cs" />
     <Compile Include="RegisterPropertiesFeature\OverridenProperties.cs" />
     <Compile Include="RegisterPropertiesFeature\RegularProperties.cs" />
     <Compile Include="RegisterPropertiesFeature\VirtualProperties.cs" />
+    <Compile Include="RegisterStaticPropertiesFeature\DeepHierarchy.cs" />
+    <Compile Include="RegisterStaticPropertiesFeature\RegularProperties.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
