@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MementoContainer</id>
-        <version>1.0.3</version>
+        <version>1.0.4</version>
         <title>MementoContainer</title>
         <authors>DCastro</authors>
         <owners>DCastro</owners>
@@ -11,14 +11,18 @@
         <description>MementoContainer is an alternative approach to the Memento design pattern.
 
 It is a lightweight utility that keeps a record of your objects' properties so that you can easily rollback to a previous state when recovering from errors.</description>
-        <releaseNotes />
+        <releaseNotes>Improved: Attributes on implemented interfaces are now "inherited"
+Improved: Attributes on extended classes are now inherited
+Added: support for explicit conversions within expressions
+Added: support for the "as" operator within expressions
+Added: documentation</releaseNotes>
         <copyright />
         <language />
         <tags>memento container undo rollback recover restore state</tags>
     </metadata>
     <files>
-        <file src="..\src\MementoContainer\bin\Release\MementoContainer.dll" target="lib\portable-net45+win8\MementoContainer.dll" />
-        <file src="..\src\MementoContainer\bin\Release\MementoContainer.pdb" target="lib\portable-net45+win8\MementoContainer.pdb" />
-        <file src="..\src\MementoContainer\bin\Release\MementoContainer.XML" target="lib\portable-net45+win8\MementoContainer.XML" />
+        <file src="..\bin\MementoContainer.dll" target="lib\portable-net45+win8\MementoContainer.dll" />
+        <file src="..\bin\MementoContainer.pdb" target="lib\portable-net45+win8\MementoContainer.pdb" />
+        <file src="..\bin\MementoContainer.XML" target="lib\portable-net45+win8\MementoContainer.XML" />
     </files>
 </package>
