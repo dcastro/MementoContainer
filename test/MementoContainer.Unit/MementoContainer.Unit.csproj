@@ -71,10 +71,6 @@
     <Compile Include="TestBase`.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MementoContainer.Mocks\MementoContainer.Mocks.csproj">
-      <Project>{7d1471aa-235b-4aba-b7ed-8ab17ab600d2}</Project>
-      <Name>MementoContainer.Mocks</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\src\MementoContainer\MementoContainer.csproj">
       <Project>{50aa9cd8-f9e7-4173-bcb3-2c8ea106824a}</Project>
       <Name>MementoContainer</Name>

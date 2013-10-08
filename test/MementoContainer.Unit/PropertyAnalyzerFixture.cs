@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using MementoContainer.Adapters;
-using MementoContainer.Mocks;
 using MementoContainer.Utils;
 using NUnit.Framework;
 
@@ -23,119 +22,27 @@ namespace MementoContainer.Unit
             Analyzer = new PropertyAnalyzer();
         }
 
-        /// <summary>
-        /// Test that an expression containing an instance property is properly resolved
-        /// </summary>
-        [Test]
-        public void TestGetProperties()
+        #region Fixture
+        private class Article
         {
-            //Arrange
-            var expectedProperties = new[]
-                {
-                    new PropertyInfoAdapter(typeof (SimpleMock).GetProperty("Property"))
-                };
+            public int Field = 0;
+            public static int StaticField = 0;
 
-            //Act
-            var properties = Analyzer.GetProperties((SimpleMock m) => m.Property);
+            public int Print()
+            {
+                return 0;
+            }
 
-            //Assert
-            CollectionAssert.AreEquivalent(expectedProperties, properties);
+            public static int StaticPrint()
+            {
+                return 0;
+            }
         }
+        #endregion
 
-        /// <summary>
-        /// Test that an expression containing a static property is properly resolved
-        /// </summary>
-        [Test]
-        public void TestGetStaticProperty()
+        private class Magazine
         {
-            //Arrange
-            var expectedProperties = new[]
-                {
-                    new PropertyInfoAdapter(typeof (StaticMock).GetProperty("StaticProperty"))
-                };
-
-            //Act
-            var properties = Analyzer.GetProperties(() => StaticMock.StaticProperty);
-
-            //Assert
-            CollectionAssert.AreEquivalent(expectedProperties, properties);
-        }
-
-        /// <summary>
-        /// Test that only properties with the MementoProperty attribute are returned
-        /// </summary>
-        [Test]
-        public void TestGetAnnotatedProperties()
-        {
-            //Arrange
-            Type t = typeof (AnnotatedMock);
-            var expectedProperties = new[]
-                                         {
-                                             new PropertyInfoAdapter(t.GetProperty("NestedProperty")),
-                                             new PropertyInfoAdapter(t.GetProperty("PublicProperty")),
-                                             new PropertyInfoAdapter(t.GetProperty("PrivateProperty", BindingFlags.NonPublic | BindingFlags.Instance)),
-                                             new PropertyInfoAdapter(t.GetProperty("StaticProperty", BindingFlags.NonPublic | BindingFlags.Static))
-                                         };
-
-            //Act
-            var properties = Analyzer.GetProperties(new AnnotatedMock());
-
-            //Assert
-            CollectionAssert.AreEquivalent(expectedProperties, properties);
-        }
-
-        /// <summary>
-        /// Test that all properties of as class with the MementoClass attribute are returned
-        /// </summary>
-        [Test]
-        public void TestGetMementoClassProperties()
-        {
-            //Arrange
-            Type t = typeof(AnnotatedClassMock);
-            var expectedProperties = new[]
-                                         {
-                                             new PropertyInfoAdapter(t.GetProperty("Property"))
-                                         };
-
-            //Act
-            var properties = Analyzer.GetProperties(new AnnotatedClassMock());
-
-            //Assert
-            CollectionAssert.AreEquivalent(expectedProperties, properties);
-        }
-
-        [Test]
-        public void TestGetDeepProperties()
-        {
-            //Arrange
-            var expectedProperties = new[]
-                {
-                    new PropertyInfoAdapter(typeof (DeepMock).GetProperty("DeepProperty")),
-                    new PropertyInfoAdapter(typeof (SimpleMock).GetProperty("Property"))
-                };
-
-            //Act
-            var properties = Analyzer.GetProperties((DeepMock m) => m.DeepProperty.Property);
-
-            //Assert
-            CollectionAssert.AreEqual(expectedProperties, properties);
-        }
-
-        [Test]
-        public void TestGetStaticDeepProperties()
-        {
-            //Arrange
-            var expectedProperties = new[]
-                {
-                    new PropertyInfoAdapter(typeof (DeepMock).GetProperty("DeepStaticProperty")),
-                    new PropertyInfoAdapter(typeof (SimpleMock).GetProperty("Property"))
-                };
-
-            //Act
-            var properties = Analyzer.GetProperties(() => DeepMock.DeepStaticProperty.Property);
-
-            //Assert
-            CollectionAssert.AreEqual(expectedProperties, properties);
+            public IList<Article> Articles { get; set; } 
         }
 
         /// <summary>
@@ -147,13 +54,13 @@ namespace MementoContainer.Unit
             //methods
             var ex = Assert.Throws<InvalidExpressionException>(() =>
                                                       Analyzer.GetProperties(
-                                                          (AnnotatedMock m) => m.GetPrivate()
+                                                          (Article a) => a.Print()
                                                           ));
             Assert.True(ex.Message.Contains("method"));
 
             ex = Assert.Throws<InvalidExpressionException>(() =>
                                           Analyzer.GetProperties(
-                                              () => StaticMock.Method()
+                                              () => Article.StaticPrint()
                                               ));
             Assert.True(ex.Message.Contains("method"));
         }
@@ -164,17 +71,17 @@ namespace MementoContainer.Unit
         [Test]
         public void TestInvalidExpressionWithClosures()
         {
-            DeepMock closureObj = new DeepMock();
+            Magazine magazine = new Magazine();
             var ex = Assert.Throws<InvalidExpressionException>(() =>
                                                       Analyzer.GetProperties(
-                                                          (SimpleMock m) => closureObj.DeepProperty
+                                                          (Article a) => magazine.Articles
                                                           ));
 
             Assert.True(ex.Message.Contains("closure"));
 
             ex = Assert.Throws<InvalidExpressionException>(() =>
                                                       Analyzer.GetProperties(
-                                                          () => closureObj.DeepProperty
+                                                          () => magazine.Articles
                                                           ));
 
             Assert.True(ex.Message.Contains("closure"));
@@ -189,7 +96,7 @@ namespace MementoContainer.Unit
             //supplying a parameter and a static property
             var ex = Assert.Throws<InvalidExpressionException>(() =>
                                                       Analyzer.GetProperties(
-                                                          (SimpleMock m) => StaticMock.StaticProperty
+                                                          (Article a) => Article.StaticPrint()
                                                           ));
         }
 
@@ -201,14 +108,14 @@ namespace MementoContainer.Unit
         {
             var ex = Assert.Throws<InvalidExpressionException>(() =>
                                                       Analyzer.GetProperties(
-                                                          (SimpleMock m) => m.Field
+                                                          (Article a) => a.Field
                                                           ));
 
             Assert.True(ex.Message.Contains("field"));
 
             ex = Assert.Throws<InvalidExpressionException>(() =>
                                           Analyzer.GetProperties(
-                                              () => StaticMock.Field
+                                              () => Article.StaticField
                                               ));
 
             Assert.True(ex.Message.Contains("field"));

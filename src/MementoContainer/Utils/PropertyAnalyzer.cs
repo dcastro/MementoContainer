@@ -26,58 +26,139 @@ namespace MementoContainer.Utils
         {
             var props = new List<PropertyInfo>();
 
-            while(expression != null && expression.NodeType == ExpressionType.MemberAccess)
+            while (expression != null)
             {
+                //validate expression
+                bool isDoneAnalyzing;
+                ValidateExpression(ref expression, hasParameter, out isDoneAnalyzing);
+
+                if(isDoneAnalyzing)
+                    break;
+
                 var memberExp = expression as MemberExpression;
-
-                if(memberExp.Member is FieldInfo)
-                    throw InvalidExpressionException.FieldFound;
-
                 var prop = memberExp.Member as PropertyInfo;
+
                 props.Insert(0, prop);
 
                 expression = memberExp.Expression;
             }
 
-            //If the expression has no parameters (i.e., should begin with a static property)
-            //then the whole expression should have been consumed (i.e., expression == null).
-            //If the expression has a parameter (i.e., should map to an instance property)
+            //If the expression has a parameter (i.e., should map to an object's property)
             //then the remaining expression must contain the parameter.
-            if (expression != null)
-            {
-                switch (expression.NodeType)
-                {
-                    case ExpressionType.Parameter:
-                        if (! hasParameter)
-                            throw InvalidExpressionException.UnexpectedOperation;
-                        break;
-                    case ExpressionType.Call:
-                        throw InvalidExpressionException.MethodFound;
-                    default:
-                        throw InvalidExpressionException.UnexpectedOperation;
-                }
-            }
-            else if (hasParameter)
+            if (hasParameter && expression == null)
                 throw InvalidExpressionException.UnexpectedOperation;
 
             return ValidateProperties(props);
         }
 
+        /// <summary>
+        /// Validates an expression and returns whether the expression has been fully analyzed
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="hasParameter"></param>
+        /// <param name="isDoneAnalyzing"></param>
+        private void ValidateExpression(ref Expression expression, bool hasParameter, out bool isDoneAnalyzing)
+        {
+            isDoneAnalyzing = false;
+
+            //validate node type
+            switch (expression.NodeType)
+            {
+                case ExpressionType.MemberAccess:
+                    break;
+                case ExpressionType.TypeAs:
+                case ExpressionType.Convert:
+                case ExpressionType.ConvertChecked:
+                    var unaryExpression = expression as UnaryExpression;
+                    expression = ((unaryExpression != null) ? unaryExpression.Operand : null);
+                    break;
+                case ExpressionType.Parameter:
+                    if (hasParameter)
+                        isDoneAnalyzing = true;
+                    else
+                        throw InvalidExpressionException.UnexpectedOperation;
+                    break;
+                case ExpressionType.Call:
+                    throw InvalidExpressionException.MethodFound;
+                default:
+                    throw InvalidExpressionException.UnexpectedOperation;
+            }
+
+            //further validation is needed
+            if (!isDoneAnalyzing)
+            {
+                //validate expression type
+                if (!(expression is MemberExpression))
+                    throw InvalidExpressionException.UnexpectedOperation;
+
+                //validate member type
+                var memberExp = expression as MemberExpression;
+                if (memberExp.Member is FieldInfo)
+                    throw InvalidExpressionException.FieldFound;
+            }
+        }
+
         public IList<IPropertyAdapter> GetProperties(object obj)
         {
             Type type = obj.GetType();
-            var props = type.GetTypeInfo().DeclaredProperties;
+            TypeInfo typeInfo = type.GetTypeInfo();
+            var props = type.GetRuntimeProperties();
+            
 
-            //Return all valid properties
-            if (type.GetTypeInfo().IsDefined(typeof(MementoClassAttribute)))
+            //check if type has MementoClassAttribute
+            if (IsMementoClass(typeInfo))
             {
-                var validProps = props.Where(p => p.HasGetAndSet()).ToList();
-                return WrapProperties(validProps);
+                return WrapProperties(
+                    LookupProperties(typeInfo, true));
             }
 
-            //Return properties with the Memento attribute
-            var mementoProps = props.Where(p => p.IsDefined(typeof(MementoPropertyAttribute))).ToList();
-            return ValidateProperties(mementoProps);
+            //lookup properties in the type's interfaces
+            var interfaces = typeInfo.ImplementedInterfaces;
+            var interfaceAnnotatedProps = interfaces.SelectMany(LookupProperties);
+
+            //filter annotated properties
+            var annotatedProps = props.Where(p =>
+                                p.IsDefined(typeof (MementoPropertyAttribute)) ||
+                                interfaceAnnotatedProps.Any(interfaceProp => interfaceProp.Name == p.Name))
+                         .ToList();
+            return ValidateProperties(annotatedProps);
+        }
+
+        private bool IsMementoClass(TypeInfo typeInfo)
+        {
+            return typeInfo.IsDefined(typeof (MementoClassAttribute));
+        }
+
+        private IList<PropertyInfo> LookupProperties(Type type)
+        {
+            TypeInfo typeinfo = type.GetTypeInfo();
+            if (IsMementoClass(typeinfo))
+                return LookupProperties(typeinfo, true);
+            return LookupProperties(typeinfo, false);
+        }
+
+        /// <summary>
+        /// Returns the type's annotated properties.
+        /// If the type has the MementoClass attribute defined, then all properties with get and set accessors are returned.
+        /// Otherwise, all properties with the MementoProperty attribute are returned.
+        /// </summary>
+        /// <param name="typeInfo"></param>
+        /// <param name="isMementoClass"></param>
+        /// <returns></returns>
+        private IList<PropertyInfo> LookupProperties(TypeInfo typeInfo, bool isMementoClass)
+        {
+            IList<PropertyInfo> props;
+
+            if (isMementoClass)
+            {
+                props = typeInfo.DeclaredProperties.Where(p => p.HasGetAndSet()).ToList();
+            }
+            else
+            {
+                props = typeInfo.DeclaredProperties.Where(p => p.IsDefined(typeof(MementoPropertyAttribute))).ToList();
+            }
+
+            return props;
         }
 
         /// <summary>
@@ -91,7 +172,7 @@ namespace MementoContainer.Utils
 
             foreach (var prop in properties)
             {
-                if(! prop.HasGetAndSet())
+                if (!prop.HasGetAndSet())
                     throw new PropertyException(prop);
                 adapters.Add(new PropertyInfoAdapter(prop));
             }
