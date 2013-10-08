@@ -120,8 +120,13 @@ namespace MementoContainer
         {
             Method.Requires<ArgumentNullException>(obj != null);
 
-            var memento = Factory.CreateMemento(obj);
-            Components.Add(memento);
+            var mementos = Factory.CreateMementos(obj);
+
+            foreach (var memento in mementos)
+            {
+                Components.Add(memento);
+            }
+
             return this;
         }
 

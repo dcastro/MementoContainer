@@ -114,7 +114,7 @@ namespace MementoContainer.Utils
 
             //lookup properties in the type's interfaces
             var interfaces = typeInfo.ImplementedInterfaces;
-            var interfaceAnnotatedProps = interfaces.SelectMany(LookupProperties);
+            var interfaceAnnotatedProps = interfaces.SelectMany(LookupProperties).ToList();
 
             //filter annotated properties
             var annotatedProps = props.Where(p =>

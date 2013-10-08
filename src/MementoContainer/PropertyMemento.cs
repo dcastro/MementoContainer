@@ -18,9 +18,9 @@ namespace MementoContainer
     /// E.g., if this PropertyMemento records the state of <code>article.Photo</code> (where article is the owner and Photo is the property),
     /// PropertyMemento might also record Photo's properties (like Size, Description, Filename).
     /// </summary>
-    internal class PropertyMemento : ICompositePropertyMemento
+    internal class PropertyMemento : ICompositeMemento, IPropertyMemento
     {
-        public IEnumerable<ICompositePropertyMemento> Children { get; set; }
+        public IEnumerable<ICompositeMemento> Children { get; set; }
         
         public object Owner { get; set; }
         public IPropertyAdapter Property { get; set; }
@@ -28,9 +28,8 @@ namespace MementoContainer
 
         //dependencies
         private IMementoFactory Factory { get; set; }
-        private IPropertyAnalyzer Analyzer { get; set; }
 
-        internal PropertyMemento(object owner, bool generateChildren, IPropertyAdapter prop, IMementoFactory factory, IPropertyAnalyzer analyzer)
+        internal PropertyMemento(object owner, bool generateChildren, IPropertyAdapter prop, IMementoFactory factory)
         {
             Property = prop;
             Owner = Property.IsStatic() ? null : owner;
@@ -38,8 +37,7 @@ namespace MementoContainer
             SavedValue = Property.GetValue(owner);
 
             Factory = factory;
-            Analyzer = analyzer;
-            Children = new List<ICompositePropertyMemento>();
+            Children = new List<ICompositeMemento>();
 
             if(generateChildren)
                 GenerateChildren();
@@ -55,15 +53,14 @@ namespace MementoContainer
         }
 
         /// <summary>
-        /// Generates instances of ICompositePropertyMemento for each property that belongs to this property's value.
+        /// Generates instances of ICompositeMemento for each property that belongs to this property's value.
         /// </summary>
         protected void GenerateChildren()
         {
             //if this property has a value, generate mementos for the value's properties
             if (SavedValue != null)
             {
-                var props = Analyzer.GetProperties(SavedValue);
-                Children = props.Select(p => Factory.CreateMemento(SavedValue, p)).ToList();
+                Children = Factory.CreateMementos(SavedValue);
             }
         }
     }

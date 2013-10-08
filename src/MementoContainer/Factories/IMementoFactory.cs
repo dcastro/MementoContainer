@@ -15,20 +15,11 @@ namespace MementoContainer.Factories
     internal interface IMementoFactory
     {
         /// <summary>
-        /// Creates a memento component from a given object 'owner' and one of its properties.
-        /// </summary>
-        /// <param name="owner">The object whose property is being registered.</param>
-        /// <param name="prop">The property being registered.</param>
-        /// <returns>A memento component.</returns>
-        ICompositePropertyMemento CreateMemento(object owner, IPropertyAdapter prop);
-
-        /// <summary>
-        /// Creates a memento component that registers several properties of a given object 'owner'.
-        /// The concrete component decides which properties to register.
+        /// Creates memento components for each of the given object "owner"'s properties.
         /// </summary>
         /// <param name="owner">The object whose properties are being registered.</param>
-        /// <returns>A memento component.</returns>
-        IMementoComponent CreateMemento(object owner);
+        /// <returns>A set of memento components.</returns>
+        IEnumerable<ICompositeMemento> CreateMementos(object owner);
 
         /// <summary>
         /// Creates a memento component from a given object 'owner' and an expression that maps an instance

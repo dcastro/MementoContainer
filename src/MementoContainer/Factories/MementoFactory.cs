@@ -20,14 +20,10 @@ namespace MementoContainer.Factories
             Analyzer = analyzer;
         }
 
-        public ICompositePropertyMemento CreateMemento(object owner, IPropertyAdapter prop)
+        public IEnumerable<ICompositeMemento> CreateMementos(object owner)
         {
-            return new PropertyMemento(owner, true, prop, this, Analyzer);
-        }
-
-        public IMementoComponent CreateMemento(object owner)
-        {
-            return new ObjectMemento(owner, this, Analyzer);
+            var props = Analyzer.GetProperties(owner);
+            return props.Select(p => new PropertyMemento(owner, true, p, this)).ToList();
         }
 
         public IMementoComponent CreateMemento<TOwner, TProp>(TOwner owner, Expression<Func<TOwner, TProp>> propertyExpression)
@@ -35,7 +31,7 @@ namespace MementoContainer.Factories
             var props = Analyzer.GetProperties(propertyExpression);
 
             if (props.Count == 1)
-                return new PropertyMemento(owner, false, props.First(), this, Analyzer);
+                return new PropertyMemento(owner, false, props.First(), this);
             return new DeepPropertyMemento(owner, props);
         }
 
@@ -44,7 +40,7 @@ namespace MementoContainer.Factories
             var props = Analyzer.GetProperties(propertyExpression);
 
             if (props.Count == 1)
-                return new PropertyMemento(null, false, props.First(), this, Analyzer);
+                return new PropertyMemento(null, false, props.First(), this);
             return new DeepPropertyMemento(null, props);
         }
     }
