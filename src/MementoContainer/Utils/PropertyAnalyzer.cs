@@ -24,7 +24,7 @@ namespace MementoContainer.Utils
 
         private IList<IPropertyAdapter> GetProperties(Expression expression, bool hasParameter)
         {
-            var props = new List<PropertyInfo>();
+            var props = new List<IPropertyAdapter>();
 
             while (expression != null)
             {
@@ -32,13 +32,13 @@ namespace MementoContainer.Utils
                 bool isDoneAnalyzing;
                 ValidateExpression(ref expression, hasParameter, out isDoneAnalyzing);
 
-                if(isDoneAnalyzing)
+                if (isDoneAnalyzing)
                     break;
 
                 var memberExp = expression as MemberExpression;
                 var prop = memberExp.Member as PropertyInfo;
 
-                props.Insert(0, prop);
+                props.Insert(0, Wrap(prop));
 
                 expression = memberExp.Expression;
             }
@@ -48,7 +48,7 @@ namespace MementoContainer.Utils
             if (hasParameter && expression == null)
                 throw InvalidExpressionException.UnexpectedOperation;
 
-            return ValidateProperties(props);
+            return props;
         }
 
         /// <summary>
@@ -103,13 +103,13 @@ namespace MementoContainer.Utils
             Type type = obj.GetType();
             TypeInfo typeInfo = type.GetTypeInfo();
             var props = type.GetRuntimeProperties();
-            
+
 
             //check if type has MementoClassAttribute
             if (IsMementoClass(typeInfo))
             {
-                return WrapProperties(
-                    LookupProperties(typeInfo, true));
+                return LookupProperties(typeInfo, true)
+                    .Select(Wrap).ToList();
             }
 
             //lookup properties in the type's interfaces
@@ -118,10 +118,12 @@ namespace MementoContainer.Utils
 
             //filter annotated properties
             var annotatedProps = props.Where(p =>
-                                p.IsDefined(typeof (MementoPropertyAttribute)) ||
-                                interfaceAnnotatedProps.Any(interfaceProp => interfaceProp.Name == p.Name))
-                         .ToList();
-            return ValidateProperties(annotatedProps);
+                                             p.IsDefined(typeof (MementoPropertyAttribute)) ||
+                                             p.IsDefined(typeof (MementoCollectionAttribute)) ||
+                                             interfaceAnnotatedProps.Any(interfaceProp => interfaceProp.Name == p.Name))
+                                      .Select(Wrap)
+                                      .ToList();
+            return annotatedProps;
         }
 
         private bool IsMementoClass(TypeInfo typeInfo)
@@ -155,42 +157,22 @@ namespace MementoContainer.Utils
             }
             else
             {
-                props = typeInfo.DeclaredProperties.Where(p => p.IsDefined(typeof(MementoPropertyAttribute))).ToList();
+                props = typeInfo.DeclaredProperties.Where(p => p.IsDefined(typeof (MementoPropertyAttribute))).ToList();
             }
 
             return props;
         }
 
         /// <summary>
-        /// Validates and wraps all properties in an adapter.
+        /// Validates and wraps a property in an adapter
         /// </summary>
-        /// <param name="properties">A group of properties being validated and wrapped.</param>
-        /// <returns>A group of properties wrapped in the IPropertyAdapter interface.</returns>
-        private IList<IPropertyAdapter> ValidateProperties(IEnumerable<PropertyInfo> properties)
+        /// <param name="property"></param>
+        /// <returns></returns>
+        private IPropertyAdapter Wrap(PropertyInfo property)
         {
-            var adapters = new List<IPropertyAdapter>();
-
-            foreach (var prop in properties)
-            {
-                if (!prop.HasGetAndSet())
-                    throw new PropertyException(prop);
-                adapters.Add(new PropertyInfoAdapter(prop));
-            }
-
-            return adapters;
-        }
-
-        /// <summary>
-        /// Wraps all properties in an adapter.
-        /// </summary>
-        /// <param name="properties">A group of properties being wrapped.</param>
-        /// <returns>A group of properties wrapped in the IPropertyAdapter interface.</returns>
-        private IList<IPropertyAdapter> WrapProperties(IEnumerable<PropertyInfo> properties)
-        {
-            return properties
-                .Select(prop => new PropertyInfoAdapter(prop))
-                .Cast<IPropertyAdapter>()
-                .ToList();
+            if (!property.HasGetAndSet())
+                throw new PropertyException(property.Name);
+            return new PropertyInfoAdapter(property);
         }
     }
 }

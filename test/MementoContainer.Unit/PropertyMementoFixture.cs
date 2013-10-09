@@ -31,7 +31,7 @@ namespace MementoContainer.Unit
                        .Returns(children);
 
             var propertyMock = new Mock<IPropertyAdapter>();
-            propertyMock.Setup(p => p.IsStatic()).Returns(false);
+            propertyMock.Setup(p => p.IsStatic).Returns(false);
             propertyMock.Setup(p => p.GetValue(obj)).Returns(InitialVal);
 
             //Act
@@ -61,7 +61,7 @@ namespace MementoContainer.Unit
             var factoryMock = new Mock<IMementoFactory>();
 
             var propertyMock = new Mock<IPropertyAdapter>();
-            propertyMock.Setup(p => p.IsStatic()).Returns(false);
+            propertyMock.Setup(p => p.IsStatic).Returns(false);
             propertyMock.Setup(p => p.GetValue(obj)).Returns(InitialVal);
             propertyMock.Setup(p => p.SetValue(obj, InitialVal));
 

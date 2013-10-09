@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using MementoContainer.Attributes;
 
 namespace MementoContainer.Adapters
 {
@@ -19,10 +20,18 @@ namespace MementoContainer.Adapters
             _property = property;
         }
 
-        public bool IsStatic()
+        public bool IsCollection
         {
-            return (_property.CanRead && _property.GetMethod.IsStatic) ||
-                   (_property.CanWrite && _property.SetMethod.IsStatic);
+            get { return _property.IsDefined(typeof (MementoCollectionAttribute)); }
+        }
+
+        public bool IsStatic
+        {
+            get
+            {
+                return (_property.CanRead && _property.GetMethod.IsStatic) ||
+                       (_property.CanWrite && _property.SetMethod.IsStatic);
+            }
         }
 
         public object GetValue(object owner)

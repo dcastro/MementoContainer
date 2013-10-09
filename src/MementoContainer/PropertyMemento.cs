@@ -32,7 +32,7 @@ namespace MementoContainer
         internal PropertyMemento(object owner, bool generateChildren, IPropertyAdapter prop, IMementoFactory factory)
         {
             Property = prop;
-            Owner = Property.IsStatic() ? null : owner;
+            Owner = Property.IsStatic ? null : owner;
 
             SavedValue = Property.GetValue(owner);
 

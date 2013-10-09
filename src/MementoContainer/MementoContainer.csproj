@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Adapters\IPropertyAdapter.cs" />
     <Compile Include="Adapters\PropertyInfoAdapter.cs" />
+    <Compile Include="Attributes\MementoCollectionAttribute.cs" />
     <Compile Include="Attributes\MementoPropertyAttribute.cs" />
     <Compile Include="Attributes\MementoClassAttribute.cs" />
     <Compile Include="DeepPropertyMemento.cs" />

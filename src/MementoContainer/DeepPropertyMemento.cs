@@ -27,7 +27,7 @@ namespace MementoContainer
             Property = props.Last();
             Links = props.Take(props.Count - 1).ToList();
 
-            Owner = Property.IsStatic() ? null : owner;
+            Owner = Property.IsStatic ? null : owner;
 
             SavedValue = GetValue();
         }

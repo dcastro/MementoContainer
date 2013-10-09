@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,10 +13,14 @@ namespace MementoContainer.Adapters
     internal interface IPropertyAdapter
     {
         /// <summary>
-        /// Determines whether this property is static.
+        /// Returns true if this property has the MementoCollection attribute defined
         /// </summary>
-        /// <returns>A boolean stating whether this property is static.</returns>
-        bool IsStatic();
+        bool IsCollection { get; }
+
+        /// <summary>
+        /// Returns true if this property is static.
+        /// </summary>
+        bool IsStatic { get; }
 
         /// <summary>
         /// Returns the property value of a specified object.

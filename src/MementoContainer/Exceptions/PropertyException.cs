@@ -12,14 +12,14 @@ namespace MementoContainer
     /// </summary>
     public class PropertyException : Exception
     {
-        internal PropertyException(PropertyInfo prop)
-            : base(PrepareMessage(prop))
+        internal PropertyException(string propertyName)
+            : base(PrepareMessage(propertyName))
         {
         }
 
-        private static string PrepareMessage(PropertyInfo prop)
+        private static string PrepareMessage(string propertyName)
         {
-            return string.Format("Property {0} must declare get and set accessors.", prop.Name);
+            return string.Format("Property {0} must declare get and set accessors.", propertyName);
         }
     }
 }
