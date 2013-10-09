@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using MementoContainer.Adapters;
+using MementoContainer.Attributes;
 using MementoContainer.Utils;
 using NUnit.Framework;
 
@@ -25,6 +26,7 @@ namespace MementoContainer.Unit
         #region Fixture
         private class Article
         {
+            public string GetOnlyProperty { get { return ""; } }
             public int Field = 0;
             public static int StaticField = 0;
 
@@ -42,7 +44,16 @@ namespace MementoContainer.Unit
 
         private class Magazine
         {
-            public IList<Article> Articles { get; set; } 
+            public IList<Article> Articles { get; set; }
+
+            [MementoProperty]
+            public string GetOnly { get { return ""; } }
+        }
+
+        private class Author
+        {
+            [MementoCollection]
+            public string NotCollection { get; set; }
         }
 
         /// <summary>
@@ -56,13 +67,13 @@ namespace MementoContainer.Unit
                                                       Analyzer.GetProperties(
                                                           (Article a) => a.Print()
                                                           ));
-            Assert.True(ex.Message.Contains("method"));
+            StringAssert.Contains("method", ex.Message);
 
             ex = Assert.Throws<InvalidExpressionException>(() =>
                                           Analyzer.GetProperties(
                                               () => Article.StaticPrint()
                                               ));
-            Assert.True(ex.Message.Contains("method"));
+            StringAssert.Contains("method", ex.Message);
         }
 
         /// <summary>
@@ -77,14 +88,14 @@ namespace MementoContainer.Unit
                                                           (Article a) => magazine.Articles
                                                           ));
 
-            Assert.True(ex.Message.Contains("closure"));
+            StringAssert.Contains("closure", ex.Message);
 
             ex = Assert.Throws<InvalidExpressionException>(() =>
                                                       Analyzer.GetProperties(
                                                           () => magazine.Articles
                                                           ));
 
-            Assert.True(ex.Message.Contains("closure"));
+            StringAssert.Contains("closure", ex.Message);
         }
 
         /// <summary>
@@ -111,14 +122,40 @@ namespace MementoContainer.Unit
                                                           (Article a) => a.Field
                                                           ));
 
-            Assert.True(ex.Message.Contains("field"));
+            StringAssert.Contains("field", ex.Message);
 
             ex = Assert.Throws<InvalidExpressionException>(() =>
                                           Analyzer.GetProperties(
                                               () => Article.StaticField
                                               ));
 
-            Assert.True(ex.Message.Contains("field"));
+            StringAssert.Contains("field", ex.Message);
+        }
+
+        /// <summary>
+        /// Tests that an exception is thrown when a property missing a set accessor is registered.
+        /// </summary>
+        [Test]
+        public void TestGetOnlyProperty()
+        {
+            var ex = Assert.Throws<PropertyException>(() => Analyzer.GetProperties(new Magazine()));
+            StringAssert.Contains("accessors", ex.Message);
+
+            ex = Assert.Throws<PropertyException>(() => Analyzer.GetProperties((Magazine m) => m.GetOnly));
+            StringAssert.Contains("accessors", ex.Message);
+        }
+
+        /// <summary>
+        /// Tests that an exception is thrown when a property has the MementoCollection attribute defined but does NOT implement ICollection<T>.
+        /// </summary>
+        [Test]
+        public void TestIsNotCollection()
+        {
+            var ex = Assert.Throws<PropertyException>(() => Analyzer.GetProperties(new Author()));
+            StringAssert.Contains("ICollection<T>", ex.Message);
+
+            ex = Assert.Throws<PropertyException>(() => Analyzer.GetProperties((Author a) => a.NotCollection));
+            StringAssert.Contains("ICollection<T>", ex.Message);
         }
     }
 }

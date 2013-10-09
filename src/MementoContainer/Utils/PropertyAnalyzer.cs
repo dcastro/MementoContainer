@@ -171,8 +171,19 @@ namespace MementoContainer.Utils
         private IPropertyAdapter Wrap(PropertyInfo property)
         {
             if (!property.HasGetAndSet())
-                throw new PropertyException(property.Name);
-            return new PropertyInfoAdapter(property);
+                throw PropertyException.MissingAccessors(property);
+            var adapter = new PropertyInfoAdapter(property);
+
+            //Check if the property's type implements ICollection<T>
+            if (adapter.IsCollection)
+            {
+                if (! property.PropertyType.GetTypeInfo().ImplementedInterfaces
+                            .Any(
+                                i =>
+                                i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof (ICollection<>)))
+                    throw PropertyException.IsNotCollection(property);
+            }
+            return adapter;
         }
     }
 }

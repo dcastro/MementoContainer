@@ -45,7 +45,6 @@ namespace MementoContainer.Unit
         [Test]
         public void TestRestore()
         {
-            
             var obj = new object();
 
             var child1 = new Mock<ICompositeMemento>();
