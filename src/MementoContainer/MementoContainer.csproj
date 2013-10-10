@@ -45,9 +45,11 @@
   <ItemGroup>
     <Compile Include="Adapters\IPropertyAdapter.cs" />
     <Compile Include="Adapters\PropertyInfoAdapter.cs" />
+    <Compile Include="Analysis\CollectionAnalyzer.cs" />
     <Compile Include="Attributes\MementoCollectionAttribute.cs" />
     <Compile Include="Attributes\MementoPropertyAttribute.cs" />
     <Compile Include="Attributes\MementoClassAttribute.cs" />
+    <Compile Include="CollectionMemento.cs" />
     <Compile Include="DeepPropertyMemento.cs" />
     <Compile Include="Exceptions\InvalidExpressionException.cs" />
     <Compile Include="Exceptions\PropertyException.cs" />
@@ -61,6 +63,7 @@
     <Compile Include="PropertyMemento.cs" />
     <Compile Include="IPropertyMemento.cs" />
     <Compile Include="Utils\ArgumentUtils.cs" />
+    <Compile Include="Analysis\ICollectionAnalyzer.cs" />
     <Compile Include="Analysis\IPropertyAnalyzer.cs" />
     <Compile Include="Utils\PropertyExtensions.cs" />
     <Compile Include="Analysis\PropertyAnalyzer.cs" />

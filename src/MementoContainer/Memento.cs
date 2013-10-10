@@ -45,7 +45,8 @@ namespace MementoContainer
         internal void InjectDependencies()
         {
             Factory = new MementoFactory(
-                new PropertyAnalyzer()
+                new PropertyAnalyzer(),
+                new CollectionAnalyzer()
             );
         }
 

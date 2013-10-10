@@ -14,22 +14,30 @@ namespace MementoContainer.Factories
     internal class MementoFactory : IMementoFactory
     {
         //dependencies
-        private IPropertyAnalyzer Analyzer { get; set; }
+        private readonly IPropertyAnalyzer _propertyAnalyzer;
+        private readonly ICollectionAnalyzer _collectionAnalyzer;
 
-        public MementoFactory(IPropertyAnalyzer analyzer)
+        public MementoFactory(IPropertyAnalyzer propertyAnalyzer, ICollectionAnalyzer collectionAnalyzer)
         {
-            Analyzer = analyzer;
+            _propertyAnalyzer = propertyAnalyzer;
+            _collectionAnalyzer = collectionAnalyzer;
         }
 
         public IEnumerable<ICompositeMemento> CreateMementos(object owner)
         {
-            var props = Analyzer.GetProperties(owner);
-            return props.Select(p => new PropertyMemento(owner, true, p, this)).ToList();
+            var propertyMementos = _propertyAnalyzer.GetProperties(owner)
+                                                    .Select(p => new PropertyMemento(owner, true, p, this));
+
+            var collectionMementos =
+                _collectionAnalyzer.GetCollections(owner, collection => CreateForCollection((dynamic) collection))
+                                   .Cast<ICompositeMemento>();
+
+            return propertyMementos.Union(collectionMementos).ToList();
         }
 
         public IMementoComponent CreateMemento<TOwner, TProp>(TOwner owner, Expression<Func<TOwner, TProp>> propertyExpression)
         {
-            var props = Analyzer.GetProperties(propertyExpression);
+            var props = _propertyAnalyzer.GetProperties(propertyExpression);
 
             if (props.Count == 1)
                 return new PropertyMemento(owner, false, props.First(), this);
@@ -38,11 +46,16 @@ namespace MementoContainer.Factories
 
         public IMementoComponent CreateMemento<TProp>(Expression<Func<TProp>> propertyExpression)
         {
-            var props = Analyzer.GetProperties(propertyExpression);
+            var props = _propertyAnalyzer.GetProperties(propertyExpression);
 
             if (props.Count == 1)
                 return new PropertyMemento(null, false, props.First(), this);
             return new DeepPropertyMemento(null, props);
+        }
+
+        private ICompositeMemento CreateForCollection<T>(ICollection<T> collection)
+        {
+            return new CollectionMemento<T>(collection);
         }
     }
 }

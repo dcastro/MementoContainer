@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using MementoContainer.Adapters;
+﻿using System.Collections.Generic;
 using MementoContainer.Analysis;
 using MementoContainer.Attributes;
-using MementoContainer.Utils;
 using NUnit.Framework;
 
-namespace MementoContainer.Unit
+namespace MementoContainer.Unit.Analysis
 {
     [TestFixture]
     class PropertyAnalyzerFixture
