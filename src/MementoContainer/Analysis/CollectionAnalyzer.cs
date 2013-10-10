@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using MementoContainer.Attributes;
+using MementoContainer.Exceptions;
 using MementoContainer.Utils;
 
 namespace MementoContainer.Analysis
@@ -14,21 +16,36 @@ namespace MementoContainer.Analysis
     {
         public IEnumerable<object> GetCollections(object obj)
         {
-            //TODO: validate object type
-
             Type type = obj.GetType();
 
             if (type.IsMementoClass())
             {
-                // TODO:
+                //find all declared collections
+                return type
+                    .GetTypeInfo()
+                    .DeclaredProperties
+                    .Where(p => p.PropertyType.IsCollection())
+                    .Select(p => p.GetValue(obj))
+                    .Where(o => o != null)
+                    .ToList();
             }
 
-            return obj.GetType()
-                      .GetFullAttributesMap()
-                      .Where(kv => kv.Value.Contains(typeof (MementoCollectionAttribute)))
-                      .Select(kv => kv.Key)
-                      .Select(property => property.GetValue(obj))
-                      .ToList();
+            //find all properties with the MementoCollection attribute
+            return type
+                .GetFullAttributesMap()
+                .Where(kv => kv.Value.Contains(typeof (MementoCollectionAttribute)))
+                .Select(kv => kv.Key)
+                .Select(ValidateCollection)
+                .Select(property => property.GetValue(obj))
+                .Where(o => o != null)
+                .ToList();
+        }
+
+        private PropertyInfo ValidateCollection(PropertyInfo property)
+        {
+            if (!property.PropertyType.IsCollection())
+                throw CollectionException.IsNotCollection(property);
+            return property;
         }
     }
 }

@@ -42,6 +42,12 @@ namespace MementoContainer.Utils
                        .IsDefined(typeof (MementoClassAttribute));
         }
 
+        public static bool IsCollection(this Type type)
+        {
+            return type.GetTypeInfo().IsGenericType &&
+                   type.GetGenericTypeDefinition() == typeof (ICollection<>);
+        }
+
         /// <summary>
         /// Returns the types of the attributes declared for a given property.
         /// </summary>
