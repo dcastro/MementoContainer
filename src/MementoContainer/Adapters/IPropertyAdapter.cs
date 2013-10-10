@@ -13,11 +13,6 @@ namespace MementoContainer.Adapters
     internal interface IPropertyAdapter
     {
         /// <summary>
-        /// Returns true if this property has the MementoCollection attribute defined
-        /// </summary>
-        bool IsCollection { get; }
-
-        /// <summary>
         /// Returns true if this property is static.
         /// </summary>
         bool IsStatic { get; }

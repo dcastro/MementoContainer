@@ -32,7 +32,7 @@ namespace MementoContainer.Unit.Utils
             var expectedAttributes3 = new List<Type>();
 
             //Act
-            var attributesMap = typeof (TestClass).GetAttributesMap();
+            var attributesMap = typeof (TestClass).GetFullAttributesMap();
 
             //Assert
             Assert.AreEqual(3, attributesMap.Count);

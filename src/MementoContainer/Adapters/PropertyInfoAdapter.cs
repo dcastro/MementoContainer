@@ -20,11 +20,6 @@ namespace MementoContainer.Adapters
             _property = property;
         }
 
-        public bool IsCollection
-        {
-            get { return _property.IsDefined(typeof (MementoCollectionAttribute)); }
-        }
-
         public bool IsStatic
         {
             get

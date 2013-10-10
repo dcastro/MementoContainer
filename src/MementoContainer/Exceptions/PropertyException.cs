@@ -22,13 +22,5 @@ namespace MementoContainer
             string message = string.Format("Property '{0}' must declare get and set accessors.", property.Name);
             return new PropertyException(message);
         }
-
-        internal static PropertyException IsNotCollection(PropertyInfo property)
-        {
-            string message = string.Format("Property '{0}' of type '{1}' does not implement ICollection<T>",
-                                           property.Name,
-                                           property.PropertyType.Name);
-            return new PropertyException(message);
-        }
     }
 }

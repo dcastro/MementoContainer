@@ -111,7 +111,7 @@ namespace MementoContainer.Analysis
                                .ToList();
             }
 
-            return type.GetAttributesMap()
+            return type.GetFullAttributesMap()
                        .Where(pair => pair.Value.Contains(typeof (MementoPropertyAttribute)))
                        .Select(pair => pair.Key)
                        .Select(Wrap)
