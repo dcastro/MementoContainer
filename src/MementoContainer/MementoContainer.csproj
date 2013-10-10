@@ -61,9 +61,10 @@
     <Compile Include="PropertyMemento.cs" />
     <Compile Include="IPropertyMemento.cs" />
     <Compile Include="Utils\ArgumentUtils.cs" />
-    <Compile Include="Utils\IPropertyAnalyzer.cs" />
+    <Compile Include="Analysis\IPropertyAnalyzer.cs" />
     <Compile Include="Utils\PropertyExtensions.cs" />
-    <Compile Include="Utils\PropertyAnalyzer.cs" />
+    <Compile Include="Analysis\PropertyAnalyzer.cs" />
+    <Compile Include="Utils\TypeExtensions.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

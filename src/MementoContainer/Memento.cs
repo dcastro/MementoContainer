@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using MementoContainer.Analysis;
 using MementoContainer.Factories;
 using MementoContainer.Utils;
 

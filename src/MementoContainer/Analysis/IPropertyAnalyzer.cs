@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using MementoContainer.Adapters;
 
-namespace MementoContainer.Utils
+namespace MementoContainer.Analysis
 {
     /// <summary>
     /// Analyzes certain inputs (e.g., expressions and objects) and looks for properties to be registered in the memento.

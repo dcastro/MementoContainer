@@ -1,14 +1,13 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 using MementoContainer.Adapters;
 using MementoContainer.Attributes;
+using MementoContainer.Utils;
 
-namespace MementoContainer.Utils
+namespace MementoContainer.Analysis
 {
     internal class PropertyAnalyzer : IPropertyAnalyzer
     {
@@ -102,65 +101,21 @@ namespace MementoContainer.Utils
         {
             Type type = obj.GetType();
             TypeInfo typeInfo = type.GetTypeInfo();
-            var props = type.GetRuntimeProperties();
-
 
             //check if type has MementoClassAttribute
-            if (IsMementoClass(typeInfo))
+            if (type.IsMementoClass())
             {
-                return LookupProperties(typeInfo, true)
-                    .Select(Wrap).ToList();
+                return typeInfo.DeclaredProperties
+                               .Where(p => p.HasGetAndSet())
+                               .Select(Wrap)
+                               .ToList();
             }
 
-            //lookup properties in the type's interfaces
-            var interfaces = typeInfo.ImplementedInterfaces;
-            var interfaceAnnotatedProps = interfaces.SelectMany(LookupProperties).ToList();
-
-            //filter annotated properties
-            var annotatedProps = props.Where(p =>
-                                             p.IsDefined(typeof (MementoPropertyAttribute)) ||
-                                             p.IsDefined(typeof (MementoCollectionAttribute)) ||
-                                             interfaceAnnotatedProps.Any(interfaceProp => interfaceProp.Name == p.Name))
-                                      .Select(Wrap)
-                                      .ToList();
-            return annotatedProps;
-        }
-
-        private bool IsMementoClass(TypeInfo typeInfo)
-        {
-            return typeInfo.IsDefined(typeof (MementoClassAttribute));
-        }
-
-        private IList<PropertyInfo> LookupProperties(Type type)
-        {
-            TypeInfo typeinfo = type.GetTypeInfo();
-            if (IsMementoClass(typeinfo))
-                return LookupProperties(typeinfo, true);
-            return LookupProperties(typeinfo, false);
-        }
-
-        /// <summary>
-        /// Returns the type's annotated properties.
-        /// If the type has the MementoClass attribute defined, then all properties with get and set accessors are returned.
-        /// Otherwise, all properties with the MementoProperty attribute are returned.
-        /// </summary>
-        /// <param name="typeInfo"></param>
-        /// <param name="isMementoClass"></param>
-        /// <returns></returns>
-        private IList<PropertyInfo> LookupProperties(TypeInfo typeInfo, bool isMementoClass)
-        {
-            IList<PropertyInfo> props;
-
-            if (isMementoClass)
-            {
-                props = typeInfo.DeclaredProperties.Where(p => p.HasGetAndSet()).ToList();
-            }
-            else
-            {
-                props = typeInfo.DeclaredProperties.Where(p => p.IsDefined(typeof (MementoPropertyAttribute))).ToList();
-            }
-
-            return props;
+            return type.GetAttributesMap()
+                       .Where(pair => pair.Value.Contains(typeof (MementoPropertyAttribute)))
+                       .Select(pair => pair.Key)
+                       .Select(Wrap)
+                       .ToList();
         }
 
         /// <summary>
@@ -172,18 +127,7 @@ namespace MementoContainer.Utils
         {
             if (!property.HasGetAndSet())
                 throw PropertyException.MissingAccessors(property);
-            var adapter = new PropertyInfoAdapter(property);
-
-            //Check if the property's type implements ICollection<T>
-            if (adapter.IsCollection)
-            {
-                if (! property.PropertyType.GetTypeInfo().ImplementedInterfaces
-                            .Any(
-                                i =>
-                                i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof (ICollection<>)))
-                    throw PropertyException.IsNotCollection(property);
-            }
-            return adapter;
+            return new PropertyInfoAdapter(property);
         }
     }
 }

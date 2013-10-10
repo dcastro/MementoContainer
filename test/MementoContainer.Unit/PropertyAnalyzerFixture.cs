@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using MementoContainer.Adapters;
+using MementoContainer.Analysis;
 using MementoContainer.Attributes;
 using MementoContainer.Utils;
 using NUnit.Framework;
@@ -48,12 +49,6 @@ namespace MementoContainer.Unit
 
             [MementoProperty]
             public string GetOnly { get { return ""; } }
-        }
-
-        private class Author
-        {
-            [MementoCollection]
-            public string NotCollection { get; set; }
         }
 
         /// <summary>
@@ -143,19 +138,6 @@ namespace MementoContainer.Unit
 
             ex = Assert.Throws<PropertyException>(() => Analyzer.GetProperties((Magazine m) => m.GetOnly));
             StringAssert.Contains("accessors", ex.Message);
-        }
-
-        /// <summary>
-        /// Tests that an exception is thrown when a property has the MementoCollection attribute defined but does NOT implement ICollection<T>.
-        /// </summary>
-        [Test]
-        public void TestIsNotCollection()
-        {
-            var ex = Assert.Throws<PropertyException>(() => Analyzer.GetProperties(new Author()));
-            StringAssert.Contains("ICollection<T>", ex.Message);
-
-            ex = Assert.Throws<PropertyException>(() => Analyzer.GetProperties((Author a) => a.NotCollection));
-            StringAssert.Contains("ICollection<T>", ex.Message);
         }
     }
 }
