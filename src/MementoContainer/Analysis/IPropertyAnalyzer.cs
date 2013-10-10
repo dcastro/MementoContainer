@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using MementoContainer.Adapters;
+using MementoContainer.Attributes;
 
 namespace MementoContainer.Analysis
 {
@@ -56,8 +57,8 @@ namespace MementoContainer.Analysis
         /// Otherwise, only properties with the MementoProperty attribute will be returned.
         /// </summary>
         /// 
-        /// <exception cref="InvalidExpressionException">
-        /// All properties that have the Memento attribute defined must declare get and set accessors.
+        /// <exception cref="PropertyException">
+        /// All properties that have the <see cref="MementoPropertyAttribute"/> defined must declare get and set accessors.
         /// </exception>
         /// 
         /// <param name="obj">The object whose properties will be retrieved.</param>

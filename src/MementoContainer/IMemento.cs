@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+using MementoContainer.Attributes;
+using MementoContainer.Exceptions;
 
 namespace MementoContainer
 {
@@ -61,7 +60,11 @@ namespace MementoContainer
         /// </summary>
         /// 
         /// <exception cref="PropertyException">
-        /// All properties being registered must declare get and set accessors.
+        /// All properties that have the <see cref="MementoPropertyAttribute"/> defined must declare get and set accessors.
+        /// </exception>
+        /// 
+        /// <exception cref="CollectionException">
+        /// All properties that have the <see cref="MementoCollectionAttribute"/> defined must implement <see cref="ICollection{T}"/>.
         /// </exception>
         /// 
         /// <param name="obj">The object whose properties are being registered.</param>
