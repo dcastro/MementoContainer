@@ -27,17 +27,10 @@ namespace MementoContainer.Unit.Analysis
         {
             //Arrange
             var article = new Article();
-            var expectedCollection = article.Pages;
-            var expectedResult = new[] { expectedCollection };
-
-            CollectionTransformer<ICollection<int>> transformer = collection =>
-                                                                      {
-                                                                          Assert.AreEqual(collection, expectedCollection);
-                                                                          return expectedCollection;
-                                                                      };
+            var expectedResult = new[] { article.Pages };
 
             //Act
-            var result = _analyzer.GetCollections(article, transformer);
+            var result = _analyzer.GetCollections(article);
 
             //Assert
             CollectionAssert.AreEquivalent(expectedResult, result);

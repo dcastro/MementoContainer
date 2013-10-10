@@ -12,7 +12,7 @@ namespace MementoContainer.Analysis
 {
     internal class CollectionAnalyzer : ICollectionAnalyzer
     {
-        public IEnumerable<T> GetCollections<T>(object obj, CollectionTransformer<T> transformer)
+        public IEnumerable<object> GetCollections(object obj)
         {
             //TODO: validate object type
 
@@ -28,7 +28,6 @@ namespace MementoContainer.Analysis
                       .Where(kv => kv.Value.Contains(typeof (MementoCollectionAttribute)))
                       .Select(kv => kv.Key)
                       .Select(property => property.GetValue(obj))
-                      .Select(o => transformer(o))
                       .ToList();
         }
     }

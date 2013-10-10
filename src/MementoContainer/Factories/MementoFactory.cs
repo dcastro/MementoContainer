@@ -29,7 +29,8 @@ namespace MementoContainer.Factories
                                                     .Select(p => new PropertyMemento(owner, true, p, this));
 
             var collectionMementos =
-                _collectionAnalyzer.GetCollections(owner, collection => CreateForCollection((dynamic) collection))
+                _collectionAnalyzer.GetCollections(owner)
+                                   .Select(o => CreateCollectionMemento((dynamic) o))
                                    .Cast<ICompositeMemento>();
 
             return propertyMementos.Union(collectionMementos).ToList();
@@ -53,7 +54,7 @@ namespace MementoContainer.Factories
             return new DeepPropertyMemento(null, props);
         }
 
-        private ICompositeMemento CreateForCollection<T>(ICollection<T> collection)
+        private ICompositeMemento CreateCollectionMemento<T>(ICollection<T> collection)
         {
             return new CollectionMemento<T>(collection);
         }
