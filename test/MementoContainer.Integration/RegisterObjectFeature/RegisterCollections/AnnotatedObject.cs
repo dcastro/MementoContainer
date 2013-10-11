@@ -9,7 +9,6 @@ using NUnit.Framework;
 namespace MementoContainer.Integration.RegisterObjectFeature.RegisterCollections
 {
     [TestFixture]
-    [Ignore("Not implemented yet.")]
     public class AnnotatedObject
     {
         [Test]
