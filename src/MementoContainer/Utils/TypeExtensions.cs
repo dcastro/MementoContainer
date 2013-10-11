@@ -44,8 +44,20 @@ namespace MementoContainer.Utils
 
         public static bool IsCollection(this Type type)
         {
+            return type.IsGenericCollection() || type.ImplementsGenericCollection();
+        }
+        
+        private static bool IsGenericCollection(this Type type)
+        {
             return type.GetTypeInfo().IsGenericType &&
-                   type.GetGenericTypeDefinition() == typeof (ICollection<>);
+                   type.GetGenericTypeDefinition() == typeof(ICollection<>);
+        }
+
+        private static bool ImplementsGenericCollection(this Type type)
+        {
+            return type.GetTypeInfo()
+                       .ImplementedInterfaces
+                       .Any(@interface => @interface.IsGenericCollection());
         }
 
         /// <summary>
