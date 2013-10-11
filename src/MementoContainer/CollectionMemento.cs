@@ -29,9 +29,27 @@ namespace MementoContainer
         {
             _collection.Clear();
 
-            foreach (var element in _copy)
+            if (_collection is List<T>)
             {
-                _collection.Add(element);
+                var list = _collection as List<T>;
+                list.AddRange(_copy);
+            }
+            else if (_collection is HashSet<T>)
+            {
+                var hashSet = _collection as HashSet<T>;
+                hashSet.UnionWith(_copy);
+            }
+            else if (_collection is SortedSet<T>)
+            {
+                var sortedSet = _collection as SortedSet<T>;
+                sortedSet.UnionWith(_copy);
+            }
+            else
+            {
+                foreach (var element in _copy)
+                {
+                    _collection.Add(element);
+                }
             }
         }
     }
