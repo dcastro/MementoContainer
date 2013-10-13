@@ -42,22 +42,52 @@ namespace MementoContainer.Utils
                        .IsDefined(typeof (MementoClassAttribute));
         }
 
-        public static bool IsCollection(this Type type)
+        /// <summary>
+        /// Returns whether this type, any of its base types or any of the implemented interfaces matches
+        /// a given generic type (e.g., <see cref="ICollection{T}"/>.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="genericType"></param>
+        /// <returns></returns>
+        public static bool ImplementsGeneric(this Type type, Type genericType)
         {
-            return type.IsGenericCollection() || type.ImplementsGenericCollection();
-        }
-        
-        private static bool IsGenericCollection(this Type type)
-        {
-            return type.GetTypeInfo().IsGenericType &&
-                   type.GetGenericTypeDefinition() == typeof(ICollection<>);
+            return type.IsGeneric(genericType) ||
+                   type.GetTypeInfo()
+                       .ImplementedInterfaces
+                       .Any(@interface => @interface.IsGeneric(genericType));
         }
 
-        private static bool ImplementsGenericCollection(this Type type)
+        /// <summary>
+        /// Returns whether this type or any of its base types matches a given
+        /// generic type (e.g., <see cref="ICollection{T}"/>
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="genericType"></param>
+        /// <returns></returns>
+        private static bool IsGeneric(this Type type, Type genericType)
+        {
+            if (type == null)
+                return false;
+
+            if (type.GetTypeInfo().IsGenericType &&
+                type.GetGenericTypeDefinition() == genericType)
+                return true;
+
+            return type.GetTypeInfo().BaseType.IsGeneric(genericType);
+        }
+
+        /// <summary>
+        /// Returns the interface implemented by this type that matches the given generic type definition.
+        /// For example, typeof(List{int}).FindGenericInterface(typeof(ICollection{})) would return ICollection{int}
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="genericType"></param>
+        /// <returns></returns>
+        public static Type FindGenericInterface(this Type type, Type genericType)
         {
             return type.GetTypeInfo()
                        .ImplementedInterfaces
-                       .Any(@interface => @interface.IsGenericCollection());
+                       .First(@interface => @interface.IsGeneric(genericType));
         }
 
         /// <summary>

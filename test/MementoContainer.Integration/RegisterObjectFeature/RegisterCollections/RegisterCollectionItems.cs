@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MementoContainer.Attributes;
 using NUnit.Framework;
+using MementoContainer.Utils;
 
 namespace MementoContainer.Integration.RegisterObjectFeature.RegisterCollections
 {
@@ -36,11 +38,11 @@ namespace MementoContainer.Integration.RegisterObjectFeature.RegisterCollections
             [MementoCollection]
             public List<Author> Authors { get; set; }
         }
-    }
 
-    [MementoClass]
-    public class Author
-    {
-        public string Name { get; set; }
+        [MementoClass]
+        private class Author
+        {
+            public string Name { get; set; }
+        }
     }
 }

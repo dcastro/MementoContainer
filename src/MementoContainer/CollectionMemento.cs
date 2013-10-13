@@ -1,26 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using MementoContainer.Factories;
+using MementoContainer.Utils;
 
 namespace MementoContainer
 {
-    internal class CollectionMemento<T> : ICompositeMemento
+    internal class CollectionMemento : ICompositeMemento
     {
-        private readonly ICollection<T> _collection;
-        private readonly T[] _copy;
+        private readonly dynamic _collection;
+        private readonly Array _copy;
         private readonly IMementoFactory _factory;
+
+        private readonly Type _collectionType;
 
         public IEnumerable<ICompositeMemento> Children { get; set; }
 
-        public CollectionMemento(ICollection<T> collection, IMementoFactory factory)
+        public CollectionMemento(object collection, IMementoFactory factory)
         {
-            _collection = collection;
-            _copy = new T[_collection.Count];
             _factory = factory;
+            _collection = new DynamicWrapper(collection);
+            _collectionType = collection.GetType();
 
+            //initialize array
+            var collectionCount = _collection.Count;
+            var genericTypeArgument = _collectionType
+                .FindGenericInterface(typeof (ICollection<>))
+                .GenericTypeArguments[0];
+
+            _copy = Array.CreateInstance(genericTypeArgument, collectionCount);
+            
             SaveState();
             GenerateChildren();
         }
@@ -35,20 +48,14 @@ namespace MementoContainer
             _collection.Clear();
 
             //use optimized "bulk insertion" if available
-            if (_collection is List<T>)
+            if (_collectionType.ImplementsGeneric(typeof (List<>)))
             {
-                var list = _collection as List<T>;
-                list.AddRange(_copy);
+                _collection.AddRange(_copy);
             }
-            else if (_collection is HashSet<T>)
+            else if (_collectionType.ImplementsGeneric(typeof (HashSet<>)) &&
+                     _collectionType.ImplementsGeneric(typeof (SortedSet<>)))
             {
-                var hashSet = _collection as HashSet<T>;
-                hashSet.UnionWith(_copy);
-            }
-            else if (_collection is SortedSet<T>)
-            {
-                var sortedSet = _collection as SortedSet<T>;
-                sortedSet.UnionWith(_copy);
+                _collection.UnionWith(_copy);
             }
             else
             {
@@ -70,8 +77,9 @@ namespace MementoContainer
         /// </summary>
         protected void GenerateChildren()
         {
-            Children = _copy.SelectMany(obj => _factory.CreateMementos(obj))
-                .ToList();
+            Children = _copy.Cast<object>()
+                            .SelectMany(obj => _factory.CreateMementos(obj))
+                            .ToList();
         }
     }
 }

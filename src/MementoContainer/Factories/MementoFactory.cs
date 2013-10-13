@@ -32,7 +32,7 @@ namespace MementoContainer.Factories
 
             var collectionMementos =
                 _collectionAnalyzer.GetCollections(owner)
-                                   .Select(o => CreateCollectionMemento((dynamic) o))
+                                   .Select(o => new CollectionMemento(o, this))
                                    .Cast<ICompositeMemento>()
                                    .ToList();
 
@@ -55,11 +55,6 @@ namespace MementoContainer.Factories
             if (props.Count == 1)
                 return new PropertyMemento(null, false, props.First(), this);
             return new DeepPropertyMemento(null, props);
-        }
-
-        private ICompositeMemento CreateCollectionMemento<T>(ICollection<T> collection)
-        {
-            return new CollectionMemento<T>(collection, this);
         }
     }
 }

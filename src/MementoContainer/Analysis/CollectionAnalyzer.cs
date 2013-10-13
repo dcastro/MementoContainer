@@ -24,7 +24,7 @@ namespace MementoContainer.Analysis
                 return type
                     .GetTypeInfo()
                     .DeclaredProperties
-                    .Where(p => p.PropertyType.IsCollection())
+                    .Where(p => p.PropertyType.ImplementsGeneric(typeof(ICollection<>)))
                     .Select(p => p.GetValue(obj))
                     .Where(o => o != null)
                     .ToList();
@@ -43,7 +43,7 @@ namespace MementoContainer.Analysis
 
         private PropertyInfo ValidateCollection(PropertyInfo property)
         {
-            if (!property.PropertyType.IsCollection())
+            if (!property.PropertyType.ImplementsGeneric(typeof(ICollection<>)))
                 throw CollectionException.IsNotCollection(property);
             return property;
         }
