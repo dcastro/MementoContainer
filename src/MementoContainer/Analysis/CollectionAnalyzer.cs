@@ -18,27 +18,37 @@ namespace MementoContainer.Analysis
         {
             Type type = obj.GetType();
 
+            IList<object> collections;
+
             if (type.IsMementoClass())
             {
                 //find all declared collections
-                return type
+                collections = type
                     .GetTypeInfo()
                     .DeclaredProperties
-                    .Where(p => p.PropertyType.ImplementsGeneric(typeof(ICollection<>)))
+                    .Where(p => p.PropertyType.ImplementsGeneric(typeof (ICollection<>)))
                     .Select(p => p.GetValue(obj))
                     .Where(o => o != null)
                     .ToList();
             }
+            else
+            {
+                //find all properties with the MementoCollection attribute
+                collections = type
+                    .GetFullAttributesMap()
+                    .Where(kv => kv.Value.Contains(typeof (MementoCollectionAttribute)))
+                    .Select(kv => kv.Key)
+                    .Select(ValidateCollection)
+                    .Select(property => property.GetValue(obj))
+                    .Where(o => o != null)
+                    .ToList();
+            }
 
-            //find all properties with the MementoCollection attribute
-            return type
-                .GetFullAttributesMap()
-                .Where(kv => kv.Value.Contains(typeof (MementoCollectionAttribute)))
-                .Select(kv => kv.Key)
-                .Select(ValidateCollection)
-                .Select(property => property.GetValue(obj))
-                .Where(o => o != null)
-                .ToList();
+            //return the object itself, if it is a collection
+            if (type.ImplementsGeneric(typeof (ICollection<>)))
+                collections.Add(obj);
+
+            return collections;
         }
 
         private PropertyInfo ValidateCollection(PropertyInfo property)
