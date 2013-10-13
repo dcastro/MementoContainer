@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -26,12 +27,14 @@ namespace MementoContainer.Factories
         public IEnumerable<ICompositeMemento> CreateMementos(object owner)
         {
             var propertyMementos = _propertyAnalyzer.GetProperties(owner)
-                                                    .Select(p => new PropertyMemento(owner, true, p, this));
+                                                    .Select(p => new PropertyMemento(owner, true, p, this))
+                                                    .ToList();
 
             var collectionMementos =
                 _collectionAnalyzer.GetCollections(owner)
                                    .Select(o => CreateCollectionMemento((dynamic) o))
-                                   .Cast<ICompositeMemento>();
+                                   .Cast<ICompositeMemento>()
+                                   .ToList();
 
             return propertyMementos.Union(collectionMementos).ToList();
         }
@@ -56,7 +59,7 @@ namespace MementoContainer.Factories
 
         private ICompositeMemento CreateCollectionMemento<T>(ICollection<T> collection)
         {
-            return new CollectionMemento<T>(collection);
+            return new CollectionMemento<T>(collection, this);
         }
     }
 }

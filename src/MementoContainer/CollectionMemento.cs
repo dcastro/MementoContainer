@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MementoContainer.Factories;
 
 namespace MementoContainer
 {
@@ -10,14 +11,18 @@ namespace MementoContainer
     {
         private readonly ICollection<T> _collection;
         private readonly T[] _copy;
+        private readonly IMementoFactory _factory;
 
         public IEnumerable<ICompositeMemento> Children { get; set; }
 
-        public CollectionMemento(ICollection<T> collection)
+        public CollectionMemento(ICollection<T> collection, IMementoFactory factory)
         {
             _collection = collection;
             _copy = new T[_collection.Count];
+            _factory = factory;
+
             SaveState();
+            GenerateChildren();
         }
 
         private void SaveState()
@@ -29,6 +34,7 @@ namespace MementoContainer
         {
             _collection.Clear();
 
+            //use optimized "bulk insertion" if available
             if (_collection is List<T>)
             {
                 var list = _collection as List<T>;
@@ -51,6 +57,21 @@ namespace MementoContainer
                     _collection.Add(element);
                 }
             }
+
+            //Restore children
+            foreach (var child in Children)
+            {
+                child.Restore();
+            }
+        }
+
+        /// <summary>
+        /// Generates instances of ICompositeMemento for each property that belongs to this property's value.
+        /// </summary>
+        protected void GenerateChildren()
+        {
+            Children = _copy.SelectMany(obj => _factory.CreateMementos(obj))
+                .ToList();
         }
     }
 }
