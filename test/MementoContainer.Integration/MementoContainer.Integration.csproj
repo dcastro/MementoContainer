@@ -63,6 +63,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegisterObjectFeature\RegisterCollections\AnnotatedObject.cs" />
     <Compile Include="RegisterObjectFeature\RegisterCollections\CollectionOfCollections.cs" />
+    <Compile Include="RegisterObjectFeature\RegisterCollections\NoCascading.cs" />
     <Compile Include="RegisterObjectFeature\RegisterCollections\NullCollection.cs" />
     <Compile Include="RegisterObjectFeature\RegisterCollections\RegisterCollectionItems.cs" />
     <Compile Include="RegisterObjectFeature\StaticProperties.cs" />
