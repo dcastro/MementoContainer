@@ -16,35 +16,39 @@ namespace MementoContainer.Unit.Utils
         public void TestGetAttributesMap()
         {
             //Arrange
-            var expectedAttributes1 = new List<Type>
+            var prop1 = typeof(TestClass).GetProperty("Prop1");
+            var prop2 = typeof(TestClass).GetProperty("Prop2");
+            var prop3 = typeof(TestClass).GetProperty("Prop3");
+
+            var expectedAttributes1 = new List<Attribute>
                 {
-                    typeof (MementoPropertyAttribute),
-                    typeof (MementoCollectionAttribute)
+                    typeof(ITestInterface).GetProperty("Prop1").GetCustomAttribute<MementoPropertyAttribute>(),
+                    prop1.GetCustomAttribute<MementoCollectionAttribute>()
                 };
 
-            var expectedAttributes2 = new List<Type>
+            var expectedAttributes2 = new List<Attribute>
                 {
-                    typeof (MementoPropertyAttribute),
-                    typeof (MementoCollectionAttribute)
+                    typeof(ITestInterface).GetProperty("Prop2").GetCustomAttribute<MementoPropertyAttribute>(),
+                    typeof(ITestInterface2).GetProperty("Prop2").GetCustomAttribute<MementoCollectionAttribute>()
                 };
 
-            var expectedAttributes3 = new List<Type>();
+            var expectedAttributes3 = new List<Attribute>();
 
             //Act
             var attributesMap = typeof (TestClass).GetFullAttributesMap();
 
             //Assert
             Assert.AreEqual(3, attributesMap.Count);
-
-            var prop1 = typeof(TestClass).GetProperty("Prop1");
+            
+            //aggregate properties of both class and interface
             Assert.True(attributesMap.ContainsKey(prop1));
             CollectionAssert.AreEquivalent(expectedAttributes1, attributesMap[prop1]);
 
-            var prop2 = typeof(TestClass).GetProperty("Prop2");
+            //fetch interface attributes
             Assert.True(attributesMap.ContainsKey(prop2));
             CollectionAssert.AreEquivalent(expectedAttributes2, attributesMap[prop2]);
 
-            var prop3 = typeof(TestClass).GetProperty("Prop3");
+            //no attributes defined
             Assert.True(attributesMap.ContainsKey(prop3));
             CollectionAssert.AreEquivalent(expectedAttributes3, attributesMap[prop3]);
         }

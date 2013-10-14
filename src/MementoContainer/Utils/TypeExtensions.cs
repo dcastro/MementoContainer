@@ -15,7 +15,7 @@ namespace MementoContainer.Utils
         /// </summary>
         /// <param name="type">The type used to build the map.</param>
         /// <returns>A dictionary that maps the type's properties to the corresponding attributes.</returns>
-        public static IDictionary<PropertyInfo, IList<Type>> GetFullAttributesMap(this Type type)
+        public static IDictionary<PropertyInfo, IList<Attribute>> GetFullAttributesMap(this Type type)
         {
             var properties = type.GetRuntimeProperties().ToList();
 
@@ -25,12 +25,12 @@ namespace MementoContainer.Utils
                                           .ToList();
 
             //merge each property's attributes with the attributes declared on any of the interfaces.
-            return properties.Select(property => new KeyValuePair<PropertyInfo, IList<Type>>(
+            return properties.Select(property => new KeyValuePair<PropertyInfo, IList<Attribute>>(
                                                      property,
-                                                     property.GetAttributeTypes().Union(
+                                                     property.GetCustomAttributes().Union(
                                                          interfaceProperties
                                                              .Where(ip => ip.Name == property.Name)
-                                                             .SelectMany(ip => ip.GetAttributeTypes()))
+                                                             .SelectMany(ip => ip.GetCustomAttributes()))
                                                              .ToList()))
                              .ToDictionary(pair => pair.Key, pair => pair.Value);
         }
@@ -87,20 +87,6 @@ namespace MementoContainer.Utils
             return type.GetTypeInfo()
                        .ImplementedInterfaces
                        .First(@interface => @interface.IsGeneric(genericType));
-        }
-
-        /// <summary>
-        /// Returns the types of the attributes declared for a given property.
-        /// </summary>
-        /// <param name="property">The property whose attributes' types will be returned.</param>
-        /// <returns>A set of attribute types.</returns>
-        private static IEnumerable<Type> GetAttributeTypes(this PropertyInfo property)
-        {
-            if (property == null)
-                return new List<Type>();
-
-            return property.CustomAttributes
-                           .Select(a => a.AttributeType);
         }
     }
 }

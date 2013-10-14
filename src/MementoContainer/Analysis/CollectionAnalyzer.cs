@@ -35,7 +35,7 @@ namespace MementoContainer.Analysis
                 //find all properties with the MementoCollection attribute
                 collections = type
                     .GetFullAttributesMap()
-                    .Where(kv => kv.Value.Contains(typeof (MementoCollectionAttribute)))
+                    .Where(kv => kv.Value.Any(attr => attr is MementoCollectionAttribute))
                     .Select(kv => kv.Key)
                     .Select(ValidateCollection)
                     .Select(property => property.GetValue(obj))
