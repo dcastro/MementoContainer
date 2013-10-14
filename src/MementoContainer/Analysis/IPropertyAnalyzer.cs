@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using MementoContainer.Adapters;
-using MementoContainer.Attributes;
 
 namespace MementoContainer.Analysis
 {

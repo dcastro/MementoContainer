@@ -4,7 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using MementoContainer.Adapters;
-using MementoContainer.Attributes;
 using MementoContainer.Utils;
 
 namespace MementoContainer.Analysis

@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using MementoContainer.Analysis;
-using MementoContainer.Attributes;
 using MementoContainer.Exceptions;
 using Moq;
 using NUnit.Framework;

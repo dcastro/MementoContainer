@@ -1,5 +1,4 @@
-﻿using MementoContainer.Attributes;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace MementoContainer.Integration.RegisterObjectFeature
 {

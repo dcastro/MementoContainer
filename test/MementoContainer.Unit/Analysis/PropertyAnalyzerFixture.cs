@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using MementoContainer.Analysis;
-using MementoContainer.Attributes;
 using NUnit.Framework;
 
 namespace MementoContainer.Unit.Analysis

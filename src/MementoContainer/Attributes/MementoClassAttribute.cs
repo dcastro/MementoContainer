@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MementoContainer.Attributes
+namespace MementoContainer
 {
     /// <summary>
     /// Specifies that all properties of this class declaring get and set accessors

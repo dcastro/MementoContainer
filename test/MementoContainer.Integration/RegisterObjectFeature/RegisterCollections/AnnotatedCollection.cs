@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using MementoContainer.Attributes;
 using NUnit.Framework;
 
 namespace MementoContainer.Integration.RegisterObjectFeature.RegisterCollections

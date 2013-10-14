@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MementoContainer.Attributes
+namespace MementoContainer
 {
     /// <summary>
     /// Specifies that this collection should be recorded within the memento container.

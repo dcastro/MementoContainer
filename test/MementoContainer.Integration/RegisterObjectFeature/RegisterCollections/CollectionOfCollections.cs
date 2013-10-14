@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MementoContainer.Attributes;
 using NUnit.Framework;
 
 namespace MementoContainer.Integration.RegisterObjectFeature.RegisterCollections
