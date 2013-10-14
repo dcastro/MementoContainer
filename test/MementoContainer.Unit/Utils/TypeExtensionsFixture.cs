@@ -20,6 +20,7 @@ namespace MementoContainer.Unit.Utils
             var prop2 = typeof (TestClass).GetProperty("Prop2");
             var prop3 = typeof (TestClass).GetProperty("Prop3");
             var prop4 = typeof (TestClass).GetProperty("Prop4");
+            var prop5 = typeof(TestClass).GetProperty("Prop5");
 
             var expectedAttributes1 = new List<Attribute>
                 {
@@ -40,11 +41,17 @@ namespace MementoContainer.Unit.Utils
                     prop4.GetCustomAttribute<MementoCollectionAttribute>()
                 };
 
+            var expectedAttributes5 = new List<Attribute>
+                {
+                    typeof (ITestInterface).GetProperty("Prop5").GetCustomAttribute<MementoCollectionAttribute>(),
+                    typeof (ITestInterface2).GetProperty("Prop5").GetCustomAttribute<MementoCollectionAttribute>()
+                };
+
             //Act
             var attributesMap = typeof (TestClass).GetFullAttributesMap();
 
             //Assert
-            Assert.AreEqual(4, attributesMap.Count);
+            Assert.AreEqual(5, attributesMap.Count);
 
             //aggregate properties of both class and interface
             Assert.True(attributesMap.ContainsKey(prop1));
@@ -61,6 +68,10 @@ namespace MementoContainer.Unit.Utils
             //attributes on derived classes override properties on base classes
             Assert.True(attributesMap.ContainsKey(prop4));
             CollectionAssert.AreEquivalent(expectedAttributes4, attributesMap[prop4]);
+
+            //when two separate interfaces define the same attribute, both are returned
+            Assert.True(attributesMap.ContainsKey(prop5));
+            CollectionAssert.AreEquivalent(expectedAttributes5, attributesMap[prop5]);
         }
 
         private interface ITestInterface
@@ -70,7 +81,10 @@ namespace MementoContainer.Unit.Utils
 
             [MementoProperty]
             string Prop2 { get; set; }
-        }
+
+            [MementoCollection]
+            string Prop5 { get; set; }
+    }
 
 
         private interface ITestInterface2
@@ -80,6 +94,9 @@ namespace MementoContainer.Unit.Utils
 
             [MementoCollection(false)]
             string Prop4 { get; set; }
+
+            [MementoCollection(false)]
+            string Prop5 { get; set; }
         }
 
         private class TestClass : ITestInterface, ITestInterface2
@@ -93,6 +110,8 @@ namespace MementoContainer.Unit.Utils
 
             [MementoCollection]
             public string Prop4 { get; set; }
+
+            public string Prop5 { get; set; }
         }
     }
 }
