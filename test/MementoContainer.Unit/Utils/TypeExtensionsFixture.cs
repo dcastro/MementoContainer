@@ -16,30 +16,36 @@ namespace MementoContainer.Unit.Utils
         public void TestGetAttributesMap()
         {
             //Arrange
-            var prop1 = typeof(TestClass).GetProperty("Prop1");
-            var prop2 = typeof(TestClass).GetProperty("Prop2");
-            var prop3 = typeof(TestClass).GetProperty("Prop3");
+            var prop1 = typeof (TestClass).GetProperty("Prop1");
+            var prop2 = typeof (TestClass).GetProperty("Prop2");
+            var prop3 = typeof (TestClass).GetProperty("Prop3");
+            var prop4 = typeof (TestClass).GetProperty("Prop4");
 
             var expectedAttributes1 = new List<Attribute>
                 {
-                    typeof(ITestInterface).GetProperty("Prop1").GetCustomAttribute<MementoPropertyAttribute>(),
+                    typeof (ITestInterface).GetProperty("Prop1").GetCustomAttribute<MementoPropertyAttribute>(),
                     prop1.GetCustomAttribute<MementoCollectionAttribute>()
                 };
 
             var expectedAttributes2 = new List<Attribute>
                 {
-                    typeof(ITestInterface).GetProperty("Prop2").GetCustomAttribute<MementoPropertyAttribute>(),
-                    typeof(ITestInterface2).GetProperty("Prop2").GetCustomAttribute<MementoCollectionAttribute>()
+                    typeof (ITestInterface).GetProperty("Prop2").GetCustomAttribute<MementoPropertyAttribute>(),
+                    typeof (ITestInterface2).GetProperty("Prop2").GetCustomAttribute<MementoCollectionAttribute>()
                 };
 
             var expectedAttributes3 = new List<Attribute>();
+
+            var expectedAttributes4 = new List<Attribute>
+                {
+                    prop4.GetCustomAttribute<MementoCollectionAttribute>()
+                };
 
             //Act
             var attributesMap = typeof (TestClass).GetFullAttributesMap();
 
             //Assert
-            Assert.AreEqual(3, attributesMap.Count);
-            
+            Assert.AreEqual(4, attributesMap.Count);
+
             //aggregate properties of both class and interface
             Assert.True(attributesMap.ContainsKey(prop1));
             CollectionAssert.AreEquivalent(expectedAttributes1, attributesMap[prop1]);
@@ -51,6 +57,10 @@ namespace MementoContainer.Unit.Utils
             //no attributes defined
             Assert.True(attributesMap.ContainsKey(prop3));
             CollectionAssert.AreEquivalent(expectedAttributes3, attributesMap[prop3]);
+
+            //attributes on derived classes override properties on base classes
+            Assert.True(attributesMap.ContainsKey(prop4));
+            CollectionAssert.AreEquivalent(expectedAttributes4, attributesMap[prop4]);
         }
 
         private interface ITestInterface
@@ -67,6 +77,9 @@ namespace MementoContainer.Unit.Utils
         {
             [MementoCollection]
             string Prop2 { get; set; }
+
+            [MementoCollection(false)]
+            string Prop4 { get; set; }
         }
 
         private class TestClass : ITestInterface, ITestInterface2
@@ -77,6 +90,9 @@ namespace MementoContainer.Unit.Utils
             public string Prop2 { get; set; }
 
             public string Prop3 { get; set; }
+
+            [MementoCollection]
+            public string Prop4 { get; set; }
         }
     }
 }

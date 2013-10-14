@@ -9,6 +9,20 @@ namespace MementoContainer.Utils
 {
     internal static class TypeExtensions
     {
+
+        private class AttributeEqualityComparer : IEqualityComparer<Attribute>
+        {
+            public bool Equals(Attribute x, Attribute y)
+            {
+                return x.GetType() == y.GetType();
+            }
+
+            public int GetHashCode(Attribute attr)
+            {
+                return attr.GetType().GetHashCode();
+            }
+        }
+
         /// <summary>
         /// Returns a dictionary that maps a type's properties to the declared attributes.
         /// This method returns attributes declared not only on the concrete type, but also on any of the implemented interfaces.
@@ -30,7 +44,8 @@ namespace MementoContainer.Utils
                                                      property.GetCustomAttributes().Union(
                                                          interfaceProperties
                                                              .Where(ip => ip.Name == property.Name)
-                                                             .SelectMany(ip => ip.GetCustomAttributes()))
+                                                             .SelectMany(ip => ip.GetCustomAttributes()),
+                                                         new AttributeEqualityComparer())
                                                              .ToList()))
                              .ToDictionary(pair => pair.Key, pair => pair.Value);
         }
