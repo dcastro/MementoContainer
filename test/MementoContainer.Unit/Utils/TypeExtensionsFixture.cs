@@ -13,16 +13,10 @@ namespace MementoContainer.Unit.Utils
     public class TypeExtensionsFixture
     {
         [Test]
-        public void TestGetAttributesMap()
+        public void TestAggregateAttributes()
         {
             //Arrange
             var prop1 = typeof (TestClass).GetProperty("Prop1");
-            var prop2 = typeof (TestClass).GetProperty("Prop2");
-            var prop3 = typeof (TestClass).GetProperty("Prop3");
-            var prop4 = typeof (TestClass).GetProperty("Prop4");
-            var prop5 = typeof (TestClass).GetProperty("Prop5");
-            var prop6 = typeof (TestClass).GetProperty("Prop6");
-            var prop7 = typeof (TestClass).GetProperty("Prop7");
 
             var expectedAttributes1 = new List<Attribute>
                 {
@@ -30,18 +24,87 @@ namespace MementoContainer.Unit.Utils
                     prop1.GetCustomAttribute<MementoCollectionAttribute>()
                 };
 
+            //Act
+            var attributesMap = typeof (TestClass).GetFullAttributesMap();
+
+            //Assert
+            Assert.True(attributesMap.ContainsKey(prop1));
+            CollectionAssert.AreEquivalent(expectedAttributes1, attributesMap[prop1]);
+        }
+
+        /// <summary>
+        /// Verifies that attributes declared in an implemented interface are returned
+        /// </summary>
+        [Test]
+        public void TestInheritInterfaceAttributes()
+        {
+            //Arrange
+            var prop2 = typeof (TestClass).GetProperty("Prop2");
+
             var expectedAttributes2 = new List<Attribute>
                 {
                     typeof (ITestInterface).GetProperty("Prop2").GetCustomAttribute<MementoPropertyAttribute>(),
                     typeof (ITestInterface2).GetProperty("Prop2").GetCustomAttribute<MementoCollectionAttribute>()
                 };
 
+            //Act
+            var attributesMap = typeof (TestClass).GetFullAttributesMap();
+
+            //Assert
+            Assert.True(attributesMap.ContainsKey(prop2));
+            CollectionAssert.AreEquivalent(expectedAttributes2, attributesMap[prop2]);
+
+        }
+
+        /// <summary>
+        /// Verifies that an empty list of attributes is returned if no attributes are defined for a property
+        /// </summary>
+        [Test]
+        public void TestNoAttributesDefined()
+        {
+            //Arrange
+            var prop3 = typeof (TestClass).GetProperty("Prop3");
+
             var expectedAttributes3 = new List<Attribute>();
+
+            //Act
+            var attributesMap = typeof (TestClass).GetFullAttributesMap();
+
+            //Assert
+            Assert.True(attributesMap.ContainsKey(prop3));
+            CollectionAssert.AreEquivalent(expectedAttributes3, attributesMap[prop3]);
+        }
+
+        /// <summary>
+        /// Verifies that attributes on derived classes override attributes on base classes
+        /// </summary>
+        [Test]
+        public void TestClassAttributesPriority()
+        {
+            //Arrange
+            var prop4 = typeof (TestClass).GetProperty("Prop4");
 
             var expectedAttributes4 = new List<Attribute>
                 {
                     prop4.GetCustomAttribute<MementoCollectionAttribute>()
                 };
+
+            //Act
+            var attributesMap = typeof (TestClass).GetFullAttributesMap();
+
+            //Assert
+            Assert.True(attributesMap.ContainsKey(prop4));
+            CollectionAssert.AreEquivalent(expectedAttributes4, attributesMap[prop4]);
+        }
+
+        /// <summary>
+        /// Verifies that when two separate interfaces define the same attribute, both are returned
+        /// </summary>
+        [Test]
+        public void TestMultipleInterfaces()
+        {
+            //Arrange
+            var prop5 = typeof (TestClass).GetProperty("Prop5");
 
             var expectedAttributes5 = new List<Attribute>
                 {
@@ -49,10 +112,44 @@ namespace MementoContainer.Unit.Utils
                     typeof (ITestInterface2).GetProperty("Prop5").GetCustomAttribute<MementoCollectionAttribute>()
                 };
 
+            //Act
+            var attributesMap = typeof (TestClass).GetFullAttributesMap();
+
+            //Assert
+            Assert.True(attributesMap.ContainsKey(prop5));
+            CollectionAssert.AreEquivalent(expectedAttributes5, attributesMap[prop5]);
+        }
+
+        /// <summary>
+        /// Verifies that attributes declared on base classes are returned
+        /// </summary>
+        [Test]
+        public void TestInheritBaseClassAttributes()
+        {
+            //Arrange
+            var prop6 = typeof (TestClass).GetProperty("Prop6");
+
             var expectedAttributes6 = new List<Attribute>
                 {
                     prop6.GetCustomAttribute<MementoPropertyAttribute>()
                 };
+
+            //Act
+            var attributesMap = typeof (TestClass).GetFullAttributesMap();
+
+            //Assert
+            Assert.True(attributesMap.ContainsKey(prop6));
+            CollectionAssert.AreEquivalent(expectedAttributes6, attributesMap[prop6]);
+        }
+
+        /// <summary>
+        /// Verifies that attributes are inherited even if the interface is not implemented directly
+        /// </summary>
+        [Test]
+        public void TestIndirectInterfaceAttributesInheritance()
+        {
+            //Arrange
+            var prop7 = typeof (TestClass).GetProperty("Prop7");
 
             var expectedAttributes7 = new List<Attribute>
                 {
@@ -63,33 +160,6 @@ namespace MementoContainer.Unit.Utils
             var attributesMap = typeof (TestClass).GetFullAttributesMap();
 
             //Assert
-            Assert.AreEqual(7, attributesMap.Count);
-
-            //aggregate properties of both class and interface
-            Assert.True(attributesMap.ContainsKey(prop1));
-            CollectionAssert.AreEquivalent(expectedAttributes1, attributesMap[prop1]);
-
-            //fetch interface attributes
-            Assert.True(attributesMap.ContainsKey(prop2));
-            CollectionAssert.AreEquivalent(expectedAttributes2, attributesMap[prop2]);
-
-            //no attributes defined
-            Assert.True(attributesMap.ContainsKey(prop3));
-            CollectionAssert.AreEquivalent(expectedAttributes3, attributesMap[prop3]);
-
-            //attributes on derived classes override properties on base classes
-            Assert.True(attributesMap.ContainsKey(prop4));
-            CollectionAssert.AreEquivalent(expectedAttributes4, attributesMap[prop4]);
-
-            //when two separate interfaces define the same attribute, both are returned
-            Assert.True(attributesMap.ContainsKey(prop5));
-            CollectionAssert.AreEquivalent(expectedAttributes5, attributesMap[prop5]);
-
-            //base class attributes are inherited
-            Assert.True(attributesMap.ContainsKey(prop6));
-            CollectionAssert.AreEquivalent(expectedAttributes6, attributesMap[prop6]);
-
-            //attributes are inherited even if the interface is not implemented directly
             Assert.True(attributesMap.ContainsKey(prop7));
             CollectionAssert.AreEquivalent(expectedAttributes7, attributesMap[prop7]);
         }
