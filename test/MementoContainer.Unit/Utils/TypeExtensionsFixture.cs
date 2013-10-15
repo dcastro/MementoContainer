@@ -20,7 +20,9 @@ namespace MementoContainer.Unit.Utils
             var prop2 = typeof (TestClass).GetProperty("Prop2");
             var prop3 = typeof (TestClass).GetProperty("Prop3");
             var prop4 = typeof (TestClass).GetProperty("Prop4");
-            var prop5 = typeof(TestClass).GetProperty("Prop5");
+            var prop5 = typeof (TestClass).GetProperty("Prop5");
+            var prop6 = typeof (TestClass).GetProperty("Prop6");
+            var prop7 = typeof (TestClass).GetProperty("Prop7");
 
             var expectedAttributes1 = new List<Attribute>
                 {
@@ -47,11 +49,21 @@ namespace MementoContainer.Unit.Utils
                     typeof (ITestInterface2).GetProperty("Prop5").GetCustomAttribute<MementoCollectionAttribute>()
                 };
 
+            var expectedAttributes6 = new List<Attribute>
+                {
+                    prop6.GetCustomAttribute<MementoPropertyAttribute>()
+                };
+
+            var expectedAttributes7 = new List<Attribute>
+                {
+                    typeof (IBaseInterface).GetProperty("Prop7").GetCustomAttribute<MementoPropertyAttribute>()
+                };
+
             //Act
             var attributesMap = typeof (TestClass).GetFullAttributesMap();
 
             //Assert
-            Assert.AreEqual(5, attributesMap.Count);
+            Assert.AreEqual(7, attributesMap.Count);
 
             //aggregate properties of both class and interface
             Assert.True(attributesMap.ContainsKey(prop1));
@@ -72,6 +84,14 @@ namespace MementoContainer.Unit.Utils
             //when two separate interfaces define the same attribute, both are returned
             Assert.True(attributesMap.ContainsKey(prop5));
             CollectionAssert.AreEquivalent(expectedAttributes5, attributesMap[prop5]);
+
+            //base class attributes are inherited
+            Assert.True(attributesMap.ContainsKey(prop6));
+            CollectionAssert.AreEquivalent(expectedAttributes6, attributesMap[prop6]);
+
+            //attributes are inherited even if the interface is not implemented directly
+            Assert.True(attributesMap.ContainsKey(prop7));
+            CollectionAssert.AreEquivalent(expectedAttributes7, attributesMap[prop7]);
         }
 
         private interface ITestInterface
@@ -84,10 +104,9 @@ namespace MementoContainer.Unit.Utils
 
             [MementoCollection]
             string Prop5 { get; set; }
-    }
+        }
 
-
-        private interface ITestInterface2
+        private interface ITestInterface2 : IBaseInterface
         {
             [MementoCollection]
             string Prop2 { get; set; }
@@ -99,7 +118,13 @@ namespace MementoContainer.Unit.Utils
             string Prop5 { get; set; }
         }
 
-        private class TestClass : ITestInterface, ITestInterface2
+        private interface IBaseInterface
+        {
+            [MementoProperty]
+            string Prop7 { get; set; }
+        }
+
+        private class TestClass : BaseClass, ITestInterface, ITestInterface2
         {
             [MementoCollection]
             public List<string> Prop1 { get; set; }
@@ -112,6 +137,14 @@ namespace MementoContainer.Unit.Utils
             public string Prop4 { get; set; }
 
             public string Prop5 { get; set; }
+
+            public string Prop7 { get; set; }
+        }
+
+        private class BaseClass
+        {
+            [MementoProperty]
+            public string Prop6 { get; set; }
         }
     }
 }

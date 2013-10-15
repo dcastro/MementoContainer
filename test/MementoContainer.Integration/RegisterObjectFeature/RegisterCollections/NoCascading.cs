@@ -11,6 +11,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature.RegisterCollections
     public class NoCascading
     {
         [Test]
+        [Ignore("Not yet implemented.")]
         public void Test()
         {
             var author = new Author { Name = "DCastro" };
