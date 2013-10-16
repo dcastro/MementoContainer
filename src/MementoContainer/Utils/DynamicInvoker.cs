@@ -8,12 +8,19 @@ using System.Threading.Tasks;
 
 namespace MementoContainer.Utils
 {
-    internal class DynamicWrapper : DynamicObject
+    /// <summary>
+    /// Wraps an object and performs calls on that object using reflection.
+    /// Simple dynamic method calls don't work if the object's type is internal (or nested private) to other assemblies (e.g., otherAssemblyObj.Do() will fail).
+    /// <para></para>
+    /// To overcome this problem, clients can make dynamic calls on this wrapper,
+    /// and those calls will be translated to reflection invocations, which work on objects of any given type, regardless of their origin or access modifiers
+    /// </summary>
+    internal class DynamicInvoker : DynamicObject
     {
         private readonly object _obj;
         private readonly Type _objType;
 
-        public DynamicWrapper(object obj)
+        public DynamicInvoker(object obj)
         {
             _obj = obj;
             _objType = _obj.GetType();
@@ -27,6 +34,7 @@ namespace MementoContainer.Utils
             
             foreach (var method in methods)
             {
+                //Let TargetInvocationException (thrown by the called method) bubble up
                 try
                 {
                     result = method.Invoke(_obj, args);
@@ -35,16 +43,7 @@ namespace MementoContainer.Utils
                 catch (ArgumentException)
                 {
                 }
-                catch (TargetInvocationException)
-                {
-                }
                 catch (TargetParameterCountException)
-                {
-                }
-                catch (InvalidOperationException)
-                {
-                }
-                catch (NotSupportedException)
                 {
                 }
             }

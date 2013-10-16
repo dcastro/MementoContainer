@@ -23,7 +23,7 @@ namespace MementoContainer
         public CollectionMemento(object collection, IMementoFactory factory)
         {
             _factory = factory;
-            _collection = new DynamicWrapper(collection);
+            _collection = new DynamicInvoker(collection);
             _collectionType = collection.GetType();
 
             //initialize array
