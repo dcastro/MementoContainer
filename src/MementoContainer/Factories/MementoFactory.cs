@@ -39,6 +39,11 @@ namespace MementoContainer.Factories
             return propertyMementos.Union(collectionMementos).ToList();
         }
 
+        public ICompositeMemento CreateCollectionMemento(object collection)
+        {
+            return new CollectionMemento(collection, this);
+        }
+
         public IMementoComponent CreateMemento<TOwner, TProp>(TOwner owner, Expression<Func<TOwner, TProp>> propertyExpression)
         {
             var props = _propertyAnalyzer.GetProperties(propertyExpression);

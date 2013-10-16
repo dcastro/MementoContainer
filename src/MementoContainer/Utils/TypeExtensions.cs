@@ -44,6 +44,11 @@ namespace MementoContainer.Utils
                        .IsDefined(typeof (MementoClassAttribute));
         }
 
+        public static bool IsCollection(this Type type)
+        {
+            return type.ImplementsGeneric(typeof (ICollection<>));
+        }
+
         /// <summary>
         /// Returns whether this type, any of its base types or any of the implemented interfaces matches
         /// a given generic type (e.g., <see cref="ICollection{T}"/>.

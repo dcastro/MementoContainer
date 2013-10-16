@@ -17,6 +17,7 @@ namespace MementoContainer
         private readonly IMementoFactory _factory;
 
         private readonly Type _collectionType;
+        private readonly Type _collectionItemsType;
 
         public IEnumerable<ICompositeMemento> Children { get; set; }
 
@@ -28,12 +29,11 @@ namespace MementoContainer
 
             //initialize array
             var collectionCount = _collection.Count;
-            var genericTypeArgument = _collectionType
+            _collectionItemsType = _collectionType
                 .FindGenericInterface(typeof (ICollection<>))
                 .GenericTypeArguments[0];
 
-            _copy = Array.CreateInstance(genericTypeArgument, collectionCount);
-            
+            _copy = Array.CreateInstance(_collectionItemsType, collectionCount);
             SaveState();
             GenerateChildren();
         }
@@ -77,10 +77,22 @@ namespace MementoContainer
         /// </summary>
         protected void GenerateChildren()
         {
-            Children = _copy.Cast<object>()
-                            .Where(o => o != null)
-                            .SelectMany(obj => _factory.CreateMementos(obj))
-                            .ToList();
+            //if this is a collection of collections
+            if (_collectionItemsType.IsCollection())
+            {
+                //create collection mementos for each item
+                Children = _copy.Cast<object>()
+                                .Where(o => o != null)
+                                .Select(obj => _factory.CreateCollectionMemento(obj))
+                                .ToList();
+            }
+            else //otherwise, create mementos for each item
+            {
+                Children = _copy.Cast<object>()
+                                .Where(o => o != null)
+                                .SelectMany(obj => _factory.CreateMementos(obj))
+                                .ToList();
+            }
         }
     }
 }

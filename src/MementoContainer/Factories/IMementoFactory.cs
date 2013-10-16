@@ -22,6 +22,13 @@ namespace MementoContainer.Factories
         IEnumerable<ICompositeMemento> CreateMementos(object owner);
 
         /// <summary>
+        /// Creates a collection memento for the given collection object.
+        /// </summary>
+        /// <param name="collection">The collection for which the memento will be created</param>
+        /// <returns>A collection memento.</returns>
+        ICompositeMemento CreateCollectionMemento(object collection);
+
+        /// <summary>
         /// Creates a memento component from a given object 'owner' and an expression that maps an instance
         /// of that object to one of its properties.
         /// <para/>
