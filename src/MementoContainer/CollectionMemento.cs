@@ -78,6 +78,7 @@ namespace MementoContainer
         protected void GenerateChildren()
         {
             Children = _copy.Cast<object>()
+                            .Where(o => o != null)
                             .SelectMany(obj => _factory.CreateMementos(obj))
                             .ToList();
         }
