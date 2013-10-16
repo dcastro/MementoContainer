@@ -11,7 +11,7 @@ using MementoContainer.Utils;
 
 namespace MementoContainer.Analysis
 {
-    internal class CollectionAnalyzer : ICollectionAnalyzer
+    internal class CollectionAnalyzer : BaseAnalyzer, ICollectionAnalyzer
     {
         public IEnumerable<Tuple<object, bool>> GetCollections(object obj)
         {
@@ -49,10 +49,6 @@ namespace MementoContainer.Analysis
             return collections;
         }
 
-        private bool GetCascade(Attribute attr)
-        {
-            return ((MementoClassAttribute) attr).Cascade;
-        }
         private bool GetCascade(IEnumerable<Attribute> attrs)
         {
             var collectionAttr = ((MementoCollectionAttribute) attrs.First(attr => attr is MementoCollectionAttribute));

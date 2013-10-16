@@ -8,7 +8,7 @@ using MementoContainer.Utils;
 
 namespace MementoContainer.Analysis
 {
-    internal class PropertyAnalyzer : IPropertyAnalyzer
+    internal class PropertyAnalyzer : BaseAnalyzer, IPropertyAnalyzer
     {
         public IList<IPropertyAdapter> GetProperties<TOwner, TProperty>(Expression<Func<TOwner, TProperty>> expression)
         {
@@ -96,25 +96,36 @@ namespace MementoContainer.Analysis
             }
         }
 
-        public IList<IPropertyAdapter> GetProperties(object obj)
+        public IList<Tuple<IPropertyAdapter, bool>> GetProperties(object obj)
         {
             Type type = obj.GetType();
-            TypeInfo typeInfo = type.GetTypeInfo();
 
             //check if type has MementoClassAttribute
             if (type.IsMementoClass())
             {
+                var typeInfo = type.GetTypeInfo();
+                var mementoClassAttr = typeInfo.GetCustomAttribute<MementoClassAttribute>();
+
                 return typeInfo.DeclaredProperties
                                .Where(p => p.HasGetAndSet())
-                               .Select(Wrap)
+                               .Select(p => Tuple.Create(p, GetCascade(mementoClassAttr)))
+                               .Select(pair => Tuple.Create(Wrap(pair.Item1), pair.Item2))
                                .ToList();
             }
 
-            return type.GetFullAttributesMap()
-                       .Where(pair => pair.Value.Any(attr => attr is MementoPropertyAttribute))
-                       .Select(pair => pair.Key)
-                       .Select(Wrap)
-                       .ToList();
+            var attributesMap = type.GetFullAttributesMap();
+            return attributesMap
+                .Where(kv => kv.Value.Any(attr => attr is MementoPropertyAttribute))
+                .Select(kv => kv.Key)
+                .Select(prop => Tuple.Create(prop, GetCascade(attributesMap[prop])))
+                .Select(pair => Tuple.Create(Wrap(pair.Item1), pair.Item2))
+                .ToList();
+        }
+
+        private bool GetCascade(IEnumerable<Attribute> attrs)
+        {
+            var collectionAttr = ((MementoPropertyAttribute)attrs.First(attr => attr is MementoPropertyAttribute));
+            return collectionAttr.Cascade;
         }
 
         /// <summary>

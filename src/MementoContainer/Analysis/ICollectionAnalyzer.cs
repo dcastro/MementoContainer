@@ -21,7 +21,7 @@ namespace MementoContainer.Analysis
         /// </exception>
         /// 
         /// <param name="obj">The object whose collections will be returned.</param>
-        /// <returns>A set of collections as objects.</returns>
+        /// <returns>A set of tuples, where the first item is a collection and the second is a boolean specifying whether cascading should happen.</returns>
         IEnumerable<Tuple<object, bool>> GetCollections(object obj);
     }
 }

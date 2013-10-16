@@ -51,6 +51,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="RegisterObjectFeature\NoCascading.cs" />
     <Compile Include="RegisterObjectFeature\RegisterCollections\AnnotatedCollection.cs" />
     <Compile Include="RegisterObjectFeature\DeepHierarchy.cs" />
     <Compile Include="RegisterObjectFeature\InheritedProperties.cs" />

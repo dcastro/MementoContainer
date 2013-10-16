@@ -61,7 +61,7 @@ namespace MementoContainer.Analysis
         /// </exception>
         /// 
         /// <param name="obj">The object whose properties will be retrieved.</param>
-        /// <returns>The object's properties.</returns>
-        IList<IPropertyAdapter> GetProperties(object obj);
+        /// <returns>A set of tuples, where the first item is a property and the second is a boolean specifying whether cascading should happen.</returns>
+        IList<Tuple<IPropertyAdapter, bool>> GetProperties(object obj);
     }
 }
