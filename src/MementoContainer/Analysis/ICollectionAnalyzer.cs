@@ -22,6 +22,6 @@ namespace MementoContainer.Analysis
         /// 
         /// <param name="obj">The object whose collections will be returned.</param>
         /// <returns>A set of collections as objects.</returns>
-        IEnumerable<object> GetCollections(object obj);
+        IEnumerable<Tuple<object, bool>> GetCollections(object obj);
     }
 }

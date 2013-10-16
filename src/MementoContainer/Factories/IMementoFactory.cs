@@ -25,8 +25,9 @@ namespace MementoContainer.Factories
         /// Creates a collection memento for the given collection object.
         /// </summary>
         /// <param name="collection">The collection for which the memento will be created</param>
+        /// <param name="cascade">Specifies whether items in this collection should be added to the container as well.</param>
         /// <returns>A collection memento.</returns>
-        ICompositeMemento CreateCollectionMemento(object collection);
+        ICompositeMemento CreateCollectionMemento(object collection, bool cascade);
 
         /// <summary>
         /// Creates a memento component from a given object 'owner' and an expression that maps an instance

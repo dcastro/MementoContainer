@@ -32,13 +32,17 @@ namespace MementoContainer.Unit.Analysis
                     Authors = new Collection<string>(),
                     Pages = new Collection<int>()
                 };
-            var expectedResult = new[] {article.Pages};
 
             //Act
-            var result = _analyzer.GetCollections(article);
+            var result = _analyzer.GetCollections(article)
+                .ToList();
 
             //Assert
-            CollectionAssert.AreEquivalent(expectedResult, result);
+            Assert.AreEqual(1, result.Count);
+
+            var pair = result.First();
+            Assert.AreSame(article.Pages, pair.Item1);
+            Assert.AreEqual(true, pair.Item2);
         }
 
         [Test]

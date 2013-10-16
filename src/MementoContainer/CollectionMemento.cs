@@ -15,17 +15,19 @@ namespace MementoContainer
         private readonly dynamic _collection;
         private readonly Array _copy;
         private readonly IMementoFactory _factory;
+        private readonly bool _cascade;
 
         private readonly Type _collectionType;
         private readonly Type _collectionItemsType;
 
         public IEnumerable<ICompositeMemento> Children { get; set; }
 
-        public CollectionMemento(object collection, IMementoFactory factory)
+        public CollectionMemento(object collection, bool cascade, IMementoFactory factory)
         {
             _factory = factory;
             _collection = new DynamicInvoker(collection);
             _collectionType = collection.GetType();
+            _cascade = cascade;
 
             //initialize array
             var collectionCount = _collection.Count;
@@ -35,7 +37,12 @@ namespace MementoContainer
 
             _copy = Array.CreateInstance(_collectionItemsType, collectionCount);
             SaveState();
-            GenerateChildren();
+
+            Children = new List<ICompositeMemento>();
+
+            if (_cascade)
+                GenerateChildren();
+
         }
 
         private void SaveState()
@@ -83,7 +90,7 @@ namespace MementoContainer
                 //create collection mementos for each item
                 Children = _copy.Cast<object>()
                                 .Where(o => o != null)
-                                .Select(obj => _factory.CreateCollectionMemento(obj))
+                                .Select(obj => _factory.CreateCollectionMemento(obj, _cascade))
                                 .ToList();
             }
             else //otherwise, create mementos for each item

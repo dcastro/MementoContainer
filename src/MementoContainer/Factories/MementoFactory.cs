@@ -32,16 +32,16 @@ namespace MementoContainer.Factories
 
             var collectionMementos =
                 _collectionAnalyzer.GetCollections(owner)
-                                   .Select(o => new CollectionMemento(o, this))
+                                   .Select(pair => new CollectionMemento(pair.Item1, pair.Item2, this))
                                    .Cast<ICompositeMemento>()
                                    .ToList();
 
             return propertyMementos.Union(collectionMementos).ToList();
         }
 
-        public ICompositeMemento CreateCollectionMemento(object collection)
+        public ICompositeMemento CreateCollectionMemento(object collection, bool cascade)
         {
-            return new CollectionMemento(collection, this);
+            return new CollectionMemento(collection, cascade, this);
         }
 
         public IMementoComponent CreateMemento<TOwner, TProp>(TOwner owner, Expression<Func<TOwner, TProp>> propertyExpression)
