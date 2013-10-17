@@ -15,14 +15,15 @@ namespace MementoContainer.Domain
         {
             Collection = collection;
 
-            var collectionAttr = ((MementoCollectionAttribute) attrs.First(attr => attr is MementoCollectionAttribute));
-            Cascade = collectionAttr.Cascade;
+            var collectionAttrs = attrs.OfType<MementoCollectionAttribute>();
+
+            Cascade = collectionAttrs.All(a => a.Cascade);
         }
 
-        public CollectionData(object collection, Attribute mementoClassAttr)
+        public CollectionData(object collection, MementoClassAttribute attr)
         {
             Collection = collection;
-            Cascade = ((MementoClassAttribute) mementoClassAttr).Cascade;
+            Cascade = attr.Cascade;
         }
     }
 }

@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace MementoContainer.Integration.RegisterObjectFeature.RegisterCollections
+namespace MementoContainer.Integration.RegisterObjectFeature.DisableCascading
 {
     [TestFixture]
-    public class NoCascading
+    public class ForCollections
     {
         [Test]
         public void TestWithMementoClassAttribute()
