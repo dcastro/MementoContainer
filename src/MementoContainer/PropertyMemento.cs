@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using MementoContainer.Adapters;
+using MementoContainer.Domain;
 using MementoContainer.Factories;
 using MementoContainer.Utils;
 
@@ -29,7 +30,11 @@ namespace MementoContainer
         //dependencies
         private IMementoFactory Factory { get; set; }
 
-        internal PropertyMemento(object owner, bool generateChildren, IPropertyAdapter prop, IMementoFactory factory)
+        internal PropertyMemento(IPropertyData data, IMementoFactory factory) : this(data.Owner, data.Cascade, data.PropertyAdapter, factory)
+        {            
+        }
+
+        internal PropertyMemento(object owner, bool cascade, IPropertyAdapter prop, IMementoFactory factory)
         {
             Property = prop;
             Owner = Property.IsStatic ? null : owner;
@@ -39,7 +44,7 @@ namespace MementoContainer
             Factory = factory;
             Children = new List<ICompositeMemento>();
 
-            if(generateChildren)
+            if(cascade)
                 GenerateChildren();
         }
 

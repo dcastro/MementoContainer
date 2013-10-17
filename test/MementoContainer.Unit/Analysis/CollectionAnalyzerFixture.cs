@@ -40,9 +40,9 @@ namespace MementoContainer.Unit.Analysis
             //Assert
             Assert.AreEqual(1, result.Count);
 
-            var pair = result.First();
-            Assert.AreSame(article.Pages, pair.Item1);
-            Assert.AreEqual(true, pair.Item2);
+            var data = result.First();
+            Assert.AreSame(article.Pages, data.Collection);
+            Assert.AreEqual(true, data.Cascade);
         }
 
         [Test]

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using MementoContainer.Adapters;
+using MementoContainer.Domain;
 
 namespace MementoContainer.Analysis
 {
@@ -61,7 +62,7 @@ namespace MementoContainer.Analysis
         /// </exception>
         /// 
         /// <param name="obj">The object whose properties will be retrieved.</param>
-        /// <returns>A set of tuples, where the first item is a property and the second is a boolean specifying whether cascading should happen.</returns>
-        IList<Tuple<IPropertyAdapter, bool>> GetProperties(object obj);
+        /// <returns>The object's properties.</returns>
+        IList<IPropertyData> GetProperties(object obj);
     }
 }

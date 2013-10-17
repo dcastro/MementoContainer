@@ -6,18 +6,19 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using MementoContainer.Domain;
 using MementoContainer.Exceptions;
 using MementoContainer.Utils;
 
 namespace MementoContainer.Analysis
 {
-    internal class CollectionAnalyzer : BaseAnalyzer, ICollectionAnalyzer
+    internal class CollectionAnalyzer : ICollectionAnalyzer
     {
-        public IEnumerable<Tuple<object, bool>> GetCollections(object obj)
+        public IEnumerable<ICollectionData> GetCollections(object obj)
         {
             Type type = obj.GetType();
 
-            IList<Tuple<object, bool>> collections;
+            IList<ICollectionData> collections;
 
             if (type.IsMementoClass())
             {
@@ -27,9 +28,10 @@ namespace MementoContainer.Analysis
 
                 collections = typeInfo
                     .DeclaredProperties
-                    .Where(p => p.PropertyType.IsCollection())
-                    .Select(p => Tuple.Create(p.GetValue(obj), GetCascade(mementoClassAttr)))
-                    .Where(pair => pair.Item1 != null)
+                    .Where(prop => prop.PropertyType.IsCollection())
+                    .Select(prop => new CollectionData(prop.GetValue(obj), mementoClassAttr))
+                    .Where(data => data.Collection != null)
+                    .Cast<ICollectionData>()
                     .ToList();
             }
             else
@@ -41,18 +43,13 @@ namespace MementoContainer.Analysis
                     .Where(kv => kv.Value.Any(attr => attr is MementoCollectionAttribute))
                     .Select(kv => kv.Key)
                     .Select(ValidateCollection)
-                    .Select(prop => Tuple.Create(prop.GetValue(obj), GetCascade(attributesMap[prop])))
-                    .Where(pair => pair.Item1 != null)
+                    .Select(prop => new CollectionData(prop.GetValue(obj), attributesMap[prop]))
+                    .Where(data => data.Collection != null)
+                    .Cast<ICollectionData>()
                     .ToList();
             }
 
             return collections;
-        }
-
-        private bool GetCascade(IEnumerable<Attribute> attrs)
-        {
-            var collectionAttr = ((MementoCollectionAttribute) attrs.First(attr => attr is MementoCollectionAttribute));
-            return collectionAttr.Cascade;
         }
 
         private PropertyInfo ValidateCollection(PropertyInfo property)

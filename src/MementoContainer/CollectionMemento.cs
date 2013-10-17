@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using MementoContainer.Domain;
 using MementoContainer.Factories;
 using MementoContainer.Utils;
 
@@ -21,6 +22,12 @@ namespace MementoContainer
         private readonly Type _collectionItemsType;
 
         public IEnumerable<ICompositeMemento> Children { get; set; }
+
+        public CollectionMemento(ICollectionData data, IMementoFactory factory)
+            : this(data.Collection, data.Cascade, factory)
+        {
+            
+        }
 
         public CollectionMemento(object collection, bool cascade, IMementoFactory factory)
         {

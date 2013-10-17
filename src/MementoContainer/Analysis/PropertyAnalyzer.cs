@@ -4,11 +4,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using MementoContainer.Adapters;
+using MementoContainer.Domain;
 using MementoContainer.Utils;
 
 namespace MementoContainer.Analysis
 {
-    internal class PropertyAnalyzer : BaseAnalyzer, IPropertyAnalyzer
+    internal class PropertyAnalyzer : IPropertyAnalyzer
     {
         public IList<IPropertyAdapter> GetProperties<TOwner, TProperty>(Expression<Func<TOwner, TProperty>> expression)
         {
@@ -96,7 +97,7 @@ namespace MementoContainer.Analysis
             }
         }
 
-        public IList<Tuple<IPropertyAdapter, bool>> GetProperties(object obj)
+        public IList<IPropertyData> GetProperties(object obj)
         {
             Type type = obj.GetType();
 
@@ -108,24 +109,21 @@ namespace MementoContainer.Analysis
 
                 return typeInfo.DeclaredProperties
                                .Where(p => p.HasGetAndSet())
-                               .Select(p => Tuple.Create(p, GetCascade(mementoClassAttr)))
-                               .Select(pair => Tuple.Create(Wrap(pair.Item1), pair.Item2))
+                               .Select(Validate)
+                               .Select(prop =>  new PropertyData(prop, mementoClassAttr, obj))
+                               .Cast<IPropertyData>()
                                .ToList();
             }
 
             var attributesMap = type.GetFullAttributesMap();
+            
             return attributesMap
                 .Where(kv => kv.Value.Any(attr => attr is MementoPropertyAttribute))
                 .Select(kv => kv.Key)
-                .Select(prop => Tuple.Create(prop, GetCascade(attributesMap[prop])))
-                .Select(pair => Tuple.Create(Wrap(pair.Item1), pair.Item2))
+                .Select(Validate)
+                .Select(prop => new PropertyData(prop, attributesMap[prop], obj))
+                .Cast<IPropertyData>()
                 .ToList();
-        }
-
-        private bool GetCascade(IEnumerable<Attribute> attrs)
-        {
-            var collectionAttr = ((MementoPropertyAttribute)attrs.First(attr => attr is MementoPropertyAttribute));
-            return collectionAttr.Cascade;
         }
 
         /// <summary>
@@ -135,9 +133,14 @@ namespace MementoContainer.Analysis
         /// <returns></returns>
         private IPropertyAdapter Wrap(PropertyInfo property)
         {
+            return new PropertyInfoAdapter(Validate(property));
+        }
+
+        private PropertyInfo Validate(PropertyInfo property)
+        {
             if (!property.HasGetAndSet())
                 throw PropertyException.MissingAccessors(property);
-            return new PropertyInfoAdapter(property);
+            return property;
         }
     }
 }

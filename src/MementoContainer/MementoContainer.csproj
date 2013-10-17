@@ -45,13 +45,15 @@
   <ItemGroup>
     <Compile Include="Adapters\IPropertyAdapter.cs" />
     <Compile Include="Adapters\PropertyInfoAdapter.cs" />
-    <Compile Include="Analysis\BaseAnalyzer.cs" />
     <Compile Include="Analysis\CollectionAnalyzer.cs" />
     <Compile Include="Attributes\MementoCollectionAttribute.cs" />
     <Compile Include="Attributes\MementoPropertyAttribute.cs" />
     <Compile Include="Attributes\MementoClassAttribute.cs" />
     <Compile Include="CollectionMemento.cs" />
     <Compile Include="DeepPropertyMemento.cs" />
+    <Compile Include="Domain\CollectionData.cs" />
+    <Compile Include="Domain\IPropertyData.cs" />
+    <Compile Include="Domain\PropertyData.cs" />
     <Compile Include="Exceptions\CollectionException.cs" />
     <Compile Include="Exceptions\InvalidExpressionException.cs" />
     <Compile Include="Exceptions\PropertyException.cs" />
@@ -59,6 +61,7 @@
     <Compile Include="Factories\MementoFactory.cs" />
     <Compile Include="ICompositeMemento.cs" />
     <Compile Include="IMemento.cs" />
+    <Compile Include="Domain\ICollectionData.cs" />
     <Compile Include="Memento.cs" />
     <Compile Include="IMementoComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

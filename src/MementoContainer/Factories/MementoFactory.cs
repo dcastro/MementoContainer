@@ -27,12 +27,12 @@ namespace MementoContainer.Factories
         public IEnumerable<ICompositeMemento> CreateMementos(object owner)
         {
             var propertyMementos = _propertyAnalyzer.GetProperties(owner)
-                                                    .Select(pair => new PropertyMemento(owner, pair.Item2, pair.Item1, this))
+                                                    .Select(data => new PropertyMemento(data, this))
                                                     .ToList();
 
             var collectionMementos =
                 _collectionAnalyzer.GetCollections(owner)
-                                   .Select(pair => new CollectionMemento(pair.Item1, pair.Item2, this))
+                                   .Select(data => new CollectionMemento(data, this))
                                    .Cast<ICompositeMemento>()
                                    .ToList();
 

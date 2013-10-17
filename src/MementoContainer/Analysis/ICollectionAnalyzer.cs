@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using MementoContainer.Domain;
 using MementoContainer.Exceptions;
 
 namespace MementoContainer.Analysis
@@ -21,7 +22,7 @@ namespace MementoContainer.Analysis
         /// </exception>
         /// 
         /// <param name="obj">The object whose collections will be returned.</param>
-        /// <returns>A set of tuples, where the first item is a collection and the second is a boolean specifying whether cascading should happen.</returns>
-        IEnumerable<Tuple<object, bool>> GetCollections(object obj);
+        /// <returns>A set of collections.</returns>
+        IEnumerable<ICollectionData> GetCollections(object obj);
     }
 }
