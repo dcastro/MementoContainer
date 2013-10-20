@@ -19,7 +19,6 @@ namespace MementoContainer.Integration.RegisterObjectFeature
                                  .Register(article);
 
             article.Title = "Something else";
-
             memento.Restore();
 
             Assert.AreEqual("Draft", article.Title);

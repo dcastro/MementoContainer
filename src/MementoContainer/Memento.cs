@@ -133,6 +133,24 @@ namespace MementoContainer
         }
 
         /// <summary>
+        /// Registers a collection.
+        /// After <see cref="IMemento.Restore"/> is called, the collection will contain the same elements as at the time of registration.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">The type of the elements in the collection.</typeparam>
+        /// <param name="collection">The collection being registered.</param>
+        /// <returns>This IMemento instance.</returns>
+        public IMemento RegisterCollection<T>(ICollection<T> collection)
+        {
+            Method.Requires<ArgumentNullException>(collection != null);
+
+            var memento = Factory.CreateCollectionMemento(collection, false);
+
+            Components.Add(memento);
+            return this;
+        }
+
+        /// <summary>
         /// Restores every registered property to their initially recorded value.
         /// </summary>
         public void Restore()

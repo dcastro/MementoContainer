@@ -55,7 +55,7 @@ namespace MementoContainer
         /// <summary>
         /// Registers properties of a given object.
         /// If the object's type has the MementoClass attribute defined, all properties declaring get and set accessors are registered.
-        /// Otherwise, only properties with the MementoProperty attribute will be registered.
+        /// Otherwise, only properties with the MementoProperty and/or MementoCollection attributes will be registered.
         /// </summary>
         /// 
         /// <exception cref="PropertyException">
@@ -69,6 +69,16 @@ namespace MementoContainer
         /// <param name="obj">The object whose properties are being registered.</param>
         /// <returns>This IMemento instance.</returns>
         IMemento Register(object obj);
+
+        /// <summary>
+        /// Registers a collection.
+        /// After <see cref="IMemento.Restore"/> is called, the collection will contain the same elements as at the time of registration.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">The type of the elements in the collection.</typeparam>
+        /// <param name="collection">The collection being registered.</param>
+        /// <returns>This IMemento instance.</returns>
+        IMemento RegisterCollection<T>(ICollection<T> collection);
 
         /// <summary>
         /// Restores every registered property to their initially recorded value.
