@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MementoContainer.Exceptions
+namespace MementoContainer
 {
     /// <summary>
     /// Thrown when a property with the MementoCollection attribute does not implement <see cref="ICollection{T}"/>

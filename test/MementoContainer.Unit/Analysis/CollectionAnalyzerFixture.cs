@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using MementoContainer.Analysis;
-using MementoContainer.Exceptions;
 using Moq;
 using NUnit.Framework;
 
@@ -62,10 +61,10 @@ namespace MementoContainer.Unit.Analysis
         public void TestNonCollections()
         {
             //Arrange
-            var article = new Magazine();
+            var magazine = new Magazine();
 
             //Act & Assert
-            var ex = Assert.Throws<CollectionException>(() =>  _analyzer.GetCollections(article));
+            var ex = Assert.Throws<CollectionException>(() =>  _analyzer.GetCollections(magazine));
             StringAssert.Contains("Title", ex.Message);
             StringAssert.Contains(typeof(string).Name, ex.Message);
         }
