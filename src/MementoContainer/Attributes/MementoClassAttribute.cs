@@ -11,7 +11,7 @@ namespace MementoContainer
     /// should be recorded within the memento container
     /// whenever an object of the containing type is registered.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
+    [AttributeUsage(AttributeTargets.Class)]
     public class MementoClassAttribute : Attribute
     {
         internal bool Cascade { get; private set; }

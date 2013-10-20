@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="RegisterObjectFeature\DisableCascading\CascadingDefinedTwice.cs" />
     <Compile Include="RegisterObjectFeature\DisableCascading\ForProperties.cs" />
+    <Compile Include="RegisterObjectFeature\InheritMementoClass.cs" />
     <Compile Include="RegisterObjectFeature\RegisterCollections\AnnotatedCollection.cs" />
     <Compile Include="RegisterObjectFeature\DeepHierarchy.cs" />
     <Compile Include="RegisterObjectFeature\InheritedProperties.cs" />
