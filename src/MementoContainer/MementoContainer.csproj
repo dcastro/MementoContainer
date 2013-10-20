@@ -59,6 +59,7 @@
     <Compile Include="Exceptions\PropertyException.cs" />
     <Compile Include="Factories\IMementoFactory.cs" />
     <Compile Include="Factories\MementoFactory.cs" />
+    <Compile Include="ICollectionAdapter.cs" />
     <Compile Include="ICompositeMemento.cs" />
     <Compile Include="IMemento.cs" />
     <Compile Include="Domain\ICollectionData.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Analysis\ICollectionAnalyzer.cs" />
     <Compile Include="Analysis\IPropertyAnalyzer.cs" />
     <Compile Include="Utils\DynamicInvoker.cs" />
+    <Compile Include="Utils\EnumerableExtensions.cs" />
     <Compile Include="Utils\PropertyExtensions.cs" />
     <Compile Include="Analysis\PropertyAnalyzer.cs" />
     <Compile Include="Utils\TypeExtensions.cs" />

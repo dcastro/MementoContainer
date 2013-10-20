@@ -17,12 +17,31 @@ namespace MementoContainer
         {
         }
 
-        internal static CollectionException IsNotCollection(PropertyInfo property)
+        private CollectionException(string msg, Exception innerException)
+            : base(msg, innerException)
         {
-            string message = string.Format("Property '{0}' of type '{1}' does not implement ICollection<T>",
-                property.Name,
-                property.PropertyType.Name);
+        }
+
+        internal static CollectionException IsNotCollection(Type type)
+        {
+            string message = string.Format("Property of type '{0}' must implement ICollection<T>. " +
+                                           "Alternatively, provide an ICollectionAdapter through the MementoCollectionAttribute overloaded constructor.",
+                                           type.Name);
             return new CollectionException(message);
+        }
+
+        internal static CollectionException InvalidAdapterType(Type type)
+        {
+            string message = string.Format("Collection adapter of type '{0}' does not implement ICollectionAdapter<T1, T2>",
+                                           type.Name);
+            return new CollectionException(message);
+        }
+
+        internal static CollectionException FailedAdapterActivation(Type type, Exception innerException)
+        {
+            string message = string.Format("Failed to instantiate collection adapter of type '{0}'",
+                                           type.Name);
+            return new CollectionException(message, innerException);
         }
     }
 }

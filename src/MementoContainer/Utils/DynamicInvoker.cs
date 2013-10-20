@@ -54,6 +54,13 @@ namespace MementoContainer.Utils
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
+            //return wrapped object
+            if (binder.Name == "InnerObject")
+            {
+                result = _obj;
+                return true;
+            }
+
             var property = _objType
                 .GetRuntimeProperty(binder.Name);
 

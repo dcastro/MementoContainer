@@ -41,22 +41,13 @@ namespace MementoContainer.Analysis
                 collections = attributesMap
                     .Where(kv => kv.Value.Any(attr => attr is MementoCollectionAttribute))
                     .Select(kv => kv.Key)
-                    .Select(ValidateCollection)
-                    .Select(prop => new CollectionData(prop.GetValue(obj), attributesMap[prop]))
+                    .Select(prop => new CollectionData(prop.GetValue(obj), prop.PropertyType, attributesMap[prop]))
                     .Where(data => data.Collection != null)
                     .Cast<ICollectionData>()
                     .ToList();
             }
 
             return collections;
-        }
-
-        private PropertyInfo ValidateCollection(PropertyInfo property)
-        {
-            if (!property.PropertyType.IsCollection())
-                throw CollectionException.IsNotCollection(property);
-
-            return property;
         }
     }
 }

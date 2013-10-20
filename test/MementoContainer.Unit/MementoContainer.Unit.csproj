@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="Analysis\CollectionAnalyzerFixture.cs" />
     <Compile Include="DeepPropertyMementoFixture.cs" />
+    <Compile Include="Domain\CollectionDataFixture.cs" />
     <Compile Include="MementoFixture.cs" />
     <Compile Include="Analysis\PropertyAnalyzerFixture.cs" />
     <Compile Include="PropertyMementoFixture.cs" />

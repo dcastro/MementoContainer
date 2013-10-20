@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -62,6 +63,10 @@ namespace MementoContainer
             _collection.Clear();
 
             //use optimized "bulk insertion" if available
+            if (_collectionType.ImplementsGeneric(typeof (ICollectionAdapter<,>)))
+            {
+                _collection.AddRange(_copy);
+            }
             if (_collectionType.ImplementsGeneric(typeof (List<>)))
             {
                 _collection.AddRange(_copy);

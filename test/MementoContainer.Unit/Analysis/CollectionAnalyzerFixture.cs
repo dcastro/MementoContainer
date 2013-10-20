@@ -65,7 +65,6 @@ namespace MementoContainer.Unit.Analysis
 
             //Act & Assert
             var ex = Assert.Throws<CollectionException>(() =>  _analyzer.GetCollections(magazine));
-            StringAssert.Contains("Title", ex.Message);
             StringAssert.Contains(typeof(string).Name, ex.Message);
         }
 
