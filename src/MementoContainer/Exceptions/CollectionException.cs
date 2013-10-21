@@ -24,24 +24,37 @@ namespace MementoContainer
 
         internal static CollectionException IsNotCollection(Type type)
         {
-            string message = string.Format("Property of type '{0}' must implement ICollection<T>. " +
+            string message = string.Format("Property of type '{0}' must implement '{1}'. " +
                                            "Alternatively, provide an ICollectionAdapter through the MementoCollectionAttribute overloaded constructor.",
-                                           type.Name);
+                                           type,
+                                           typeof(ICollection<>));
             return new CollectionException(message);
         }
 
         internal static CollectionException InvalidAdapterType(Type type)
         {
-            string message = string.Format("Collection adapter of type '{0}' does not implement ICollectionAdapter<T1, T2>",
-                                           type.Name);
+            string message = string.Format("Collection adapter of type '{0}' does not implement '{1}'",
+                                           type,
+                                           typeof(ICollectionAdapter<,>));
             return new CollectionException(message);
         }
 
         internal static CollectionException FailedAdapterActivation(Type type, Exception innerException)
         {
             string message = string.Format("Failed to instantiate collection adapter of type '{0}'",
-                                           type.Name);
+                                           type);
             return new CollectionException(message, innerException);
+        }
+
+        internal static CollectionException AdapterTypeMismatch(Type adapterType, /* e.g., StackAdapter */
+                                                                Type boundGenericAdapterType, /* e.g, ICollectionAdapter<Stack<string>, string> */
+                                                                Type collectionType) /* e.g., Stack<int> */
+        {
+            string message = string.Format("Collection adapter of type '{0}' (which implements '{1}') cannot be used with collections of type '{2}'.",
+                                           adapterType,
+                                           boundGenericAdapterType,
+                                           collectionType);
+            return new CollectionException(message);
         }
     }
 }

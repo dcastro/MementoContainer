@@ -28,8 +28,7 @@ namespace MementoContainer.Domain
                 {
                     //get adapter type
                     Type adapterType = attr.CollectionAdapterType;
-                    if (!adapterType.ImplementsGeneric(typeof (ICollectionAdapter<,>)))
-                        throw CollectionException.InvalidAdapterType(adapterType);
+                    ValidateAdapter(adapterType, propertyType);
 
                     hasAdapter = true;
 
@@ -60,6 +59,24 @@ namespace MementoContainer.Domain
             if (!isCollection && !hasAdapter)
             {
                 throw CollectionException.IsNotCollection(propertyType);
+            }
+        }
+
+        private void ValidateAdapter(Type adapterType, Type propertyType)
+        {
+            //check that it implements the right interface
+            if (!adapterType.ImplementsGeneric(typeof (ICollectionAdapter<,>)))
+                throw CollectionException.InvalidAdapterType(adapterType);
+
+            //check that it matches the property type
+            var boundGenericType = adapterType.GetBoundGenericInterface(typeof (ICollectionAdapter<,>));
+            var tCollectionArgument = boundGenericType.GenericTypeArguments[0];
+
+            //if an instance of propertyType cannot be assigned to the type argument TCollection, throw an exceptions
+            if (!tCollectionArgument.GetTypeInfo()
+                                    .IsAssignableFrom(propertyType.GetTypeInfo()))
+            {
+                throw CollectionException.AdapterTypeMismatch(adapterType, boundGenericType, propertyType);
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,7 +22,8 @@ namespace MementoContainer.Unit.Domain
                 };
             
             //Act
-            Assert.Throws<CollectionException>(() => new CollectionData(null, typeof (ICollection<int>), attributes));
+            var ex = Assert.Throws<CollectionException>(() => new CollectionData(null, typeof (ICollection<int>), attributes));
+            Debug.WriteLine(ex.Message);
         }
 
         [Test]
@@ -33,7 +35,8 @@ namespace MementoContainer.Unit.Domain
                 };
 
             //Act
-            var ex = Assert.Throws<CollectionException>(() => new CollectionData(null, typeof(ICollection<int>), attributes));
+            var ex = Assert.Throws<CollectionException>(() => new CollectionData(null, typeof(Stack<int>), attributes));
+            Debug.WriteLine(ex.Message);
             StringAssert.Contains("instantiate", ex.Message);
             StringAssert.Contains(typeof(InvalidAdapter).Name, ex.Message);
         }
@@ -60,16 +63,31 @@ namespace MementoContainer.Unit.Domain
 
             //Act
             var ex = Assert.Throws<CollectionException>(() => new CollectionData(new Stack<int>(), typeof(Stack<int>), attributes));
+            Debug.WriteLine(ex.Message);
             StringAssert.Contains(typeof(Stack<int>).Name, ex.Message);
+        }
+
+        [Test]
+        public void TestAdapterTypeAndCollectionTypeMismatch()
+        {
+            Attribute[] attributes = new Attribute[]
+                {
+                    new MementoCollectionAttribute(typeof(ValidAdapter))
+                };
+
+            //Act
+            var ex = Assert.Throws<CollectionException>(() => new CollectionData(new Queue<int>(), typeof(Queue<int>), attributes));
+            Debug.WriteLine(ex.Message);
+            StringAssert.Contains("cannot be used", ex.Message);
         }
 
         /// <summary>
         /// ICollectionAdapter with no public parameterless constructor
         /// </summary>
-        private class InvalidAdapter : ICollectionAdapter<int, int>
+        private class InvalidAdapter : ICollectionAdapter<Stack<int>, int>
         {
-            public InvalidAdapter(int i) {}
-            public void Initalize(int collection)
+            public InvalidAdapter(int i) { }
+            public void Initalize(Stack<int> collection)
             {
                 throw new NotImplementedException();
             }

@@ -40,7 +40,7 @@ namespace MementoContainer
             //initialize array
             var collectionCount = _collection.Count;
             _collectionItemsType = _collectionType
-                .FindGenericInterface(typeof (ICollection<>))
+                .GetBoundGenericInterface(typeof (ICollection<>))
                 .GenericTypeArguments[0];
 
             _copy = Array.CreateInstance(_collectionItemsType, collectionCount);

@@ -85,12 +85,12 @@ namespace MementoContainer.Utils
 
         /// <summary>
         /// Returns the interface implemented by this type that matches the given generic type definition.
-        /// For example, typeof(List{int}).FindGenericInterface(typeof(ICollection{})) would return ICollection{int}
+        /// For example, typeof(List{int}).GetBoundGenericInterface(typeof(ICollection{})) would return ICollection{int}
         /// </summary>
         /// <param name="type"></param>
         /// <param name="genericType"></param>
         /// <returns></returns>
-        public static Type FindGenericInterface(this Type type, Type genericType)
+        public static Type GetBoundGenericInterface(this Type type, Type genericType)
         {
             return type.GetTypeInfo()
                        .ImplementedInterfaces
