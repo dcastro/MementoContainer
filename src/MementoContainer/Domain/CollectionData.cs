@@ -11,6 +11,7 @@ namespace MementoContainer.Domain
     internal class CollectionData : ICollectionData
     {
         public object Collection { get; private set; }
+        public Type ElementType { get; private set; }
         public bool Cascade { get; private set; }
 
         private void Validate(IEnumerable<MementoCollectionAttribute> attrs, Type propertyType)
@@ -20,6 +21,7 @@ namespace MementoContainer.Domain
             bool isCollection = propertyType.IsCollection();
 
             bool hasAdapter = false;
+            Type adapterType = null;
             if (attrs != null)
             {
                 //Find an attribute with an adapter type
@@ -27,7 +29,7 @@ namespace MementoContainer.Domain
                 if (attr != null)
                 {
                     //get adapter type
-                    Type adapterType = attr.CollectionAdapterType;
+                    adapterType = attr.CollectionAdapterType;
                     ValidateAdapter(adapterType, propertyType);
 
                     hasAdapter = true;
@@ -42,7 +44,6 @@ namespace MementoContainer.Domain
                     {
                         throw CollectionException.FailedAdapterActivation(adapterType, ex);
                     }
-                    
 
                     if (Collection != null)
                     {
@@ -59,6 +60,16 @@ namespace MementoContainer.Domain
             if (!isCollection && !hasAdapter)
             {
                 throw CollectionException.IsNotCollection(propertyType);
+            }
+
+            //fetch element type
+            if (isCollection)
+            {
+                ElementType = propertyType.GetCollectionElementType();
+            }
+            if (hasAdapter)
+            {
+                ElementType = adapterType.GetAdapterElementType();
             }
         }
 

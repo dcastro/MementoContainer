@@ -49,6 +49,20 @@ namespace MementoContainer.Utils
             return type.ImplementsGeneric(typeof (ICollection<>));
         }
 
+        public static Type GetCollectionElementType(this Type type)
+        {
+            return type
+                .GetBoundGenericInterface(typeof (ICollection<>))
+                .GenericTypeArguments[0];
+        }
+
+        public static Type GetAdapterElementType(this Type type)
+        {
+            return type
+                .GetBoundGenericInterface(typeof (ICollectionAdapter<,>))
+                .GenericTypeArguments[1];
+        }
+
         /// <summary>
         /// Returns whether this type, any of its base types or any of the implemented interfaces matches
         /// a given generic type (e.g., <see cref="ICollection{T}"/>.
@@ -92,6 +106,9 @@ namespace MementoContainer.Utils
         /// <returns></returns>
         public static Type GetBoundGenericInterface(this Type type, Type genericType)
         {
+            if (type.IsGeneric(genericType))
+                return type;
+
             return type.GetTypeInfo()
                        .ImplementedInterfaces
                        .First(@interface => @interface.IsGeneric(genericType));

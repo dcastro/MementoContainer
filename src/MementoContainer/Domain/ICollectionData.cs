@@ -17,6 +17,11 @@ namespace MementoContainer.Domain
         object Collection { get; }
 
         /// <summary>
+        /// Gets the type of the elements stored in the Collection.
+        /// </summary>
+        Type ElementType { get; }
+
+        /// <summary>
         /// Specifies whether 'cascading' should be performed.
         /// </summary>
         bool Cascade { get; }

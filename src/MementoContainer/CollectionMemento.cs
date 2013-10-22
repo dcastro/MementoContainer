@@ -20,17 +20,17 @@ namespace MementoContainer
         private readonly bool _cascade;
 
         private readonly Type _collectionType;
-        private readonly Type _collectionItemsType;
+        private readonly Type _collectionElementType;
 
         public IEnumerable<ICompositeMemento> Children { get; set; }
 
         public CollectionMemento(ICollectionData data, IMementoFactory factory)
-            : this(data.Collection, data.Cascade, factory)
+            : this(data.Collection, data.Cascade, factory, data.ElementType)
         {
             
         }
 
-        public CollectionMemento(object collection, bool cascade, IMementoFactory factory)
+        public CollectionMemento(object collection, bool cascade, IMementoFactory factory, Type elementType = null)
         {
             _factory = factory;
             _collection = new DynamicInvoker(collection);
@@ -39,11 +39,9 @@ namespace MementoContainer
 
             //initialize array
             var collectionCount = _collection.Count;
-            _collectionItemsType = _collectionType
-                .GetBoundGenericInterface(typeof (ICollection<>))
-                .GenericTypeArguments[0];
+            _collectionElementType = elementType ?? _collectionType.GetCollectionElementType();
 
-            _copy = Array.CreateInstance(_collectionItemsType, collectionCount);
+            _copy = Array.CreateInstance(_collectionElementType, collectionCount);
             SaveState();
 
             Children = new List<ICompositeMemento>();
@@ -67,7 +65,7 @@ namespace MementoContainer
             {
                 _collection.AddRange(_copy);
             }
-            if (_collectionType.ImplementsGeneric(typeof (List<>)))
+            else if (_collectionType.ImplementsGeneric(typeof (List<>)))
             {
                 _collection.AddRange(_copy);
             }
@@ -97,7 +95,7 @@ namespace MementoContainer
         protected void GenerateChildren()
         {
             //if this is a collection of collections
-            if (_collectionItemsType.IsCollection())
+            if (_collectionElementType.IsCollection())
             {
                 //create collection mementos for each item
                 Children = _copy.Cast<object>()

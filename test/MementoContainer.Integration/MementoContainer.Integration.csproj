@@ -68,6 +68,7 @@
     <Compile Include="RegisterObjectFeature\RegisterCollections\AnnotatedObject.cs" />
     <Compile Include="RegisterObjectFeature\RegisterCollections\CollectionOfCollections.cs" />
     <Compile Include="RegisterObjectFeature\DisableCascading\ForCollections.cs" />
+    <Compile Include="RegisterObjectFeature\RegisterCollections\CustomCollection.cs" />
     <Compile Include="RegisterObjectFeature\RegisterCollections\NullCollection.cs" />
     <Compile Include="RegisterObjectFeature\RegisterCollections\RegisterCollectionItems.cs" />
     <Compile Include="RegisterObjectFeature\StaticProperties.cs" />
