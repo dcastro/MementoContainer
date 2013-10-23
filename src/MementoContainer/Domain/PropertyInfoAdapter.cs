@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 
-namespace MementoContainer.Adapters
+namespace MementoContainer.Domain
 {
     /// <summary>
     /// Wraps System.Reflection.PropertyInfo to make the system more testable.

@@ -43,8 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Adapters\IPropertyAdapter.cs" />
-    <Compile Include="Adapters\PropertyInfoAdapter.cs" />
+    <Compile Include="Domain\IPropertyAdapter.cs" />
+    <Compile Include="Domain\PropertyInfoAdapter.cs" />
     <Compile Include="Analysis\CollectionAnalyzer.cs" />
     <Compile Include="Attributes\MementoCollectionAttribute.cs" />
     <Compile Include="Attributes\MementoPropertyAttribute.cs" />
@@ -77,7 +77,9 @@
     <Compile Include="Analysis\PropertyAnalyzer.cs" />
     <Compile Include="Utils\TypeExtensions.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Adapters\" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy $(ProjectDir)$(OutDir)*.* $(SolutionDir)bin\ /Y</PostBuildEvent>

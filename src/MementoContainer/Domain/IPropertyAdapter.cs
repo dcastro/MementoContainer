@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MementoContainer.Adapters
+﻿namespace MementoContainer.Domain
 {
     /// <summary>
     /// Represents an instance or static property

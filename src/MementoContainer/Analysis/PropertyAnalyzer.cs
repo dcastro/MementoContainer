@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using MementoContainer.Adapters;
 using MementoContainer.Domain;
 using MementoContainer.Utils;
 
