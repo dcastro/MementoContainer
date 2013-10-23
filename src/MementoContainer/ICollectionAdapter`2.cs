@@ -12,13 +12,12 @@ namespace MementoContainer
     /// </summary>
     /// <typeparam name="TCollection">The type of the collection.</typeparam>
     /// <typeparam name="TItem">The type of the elements in the collection.</typeparam>
-    public interface ICollectionAdapter<in TCollection, in TItem>
+    public interface ICollectionAdapter<TCollection, in TItem>
     {
         /// <summary>
-        /// Initializes the adapter with an instance of <typeparamref name="TCollection"/>.
+        /// Gets or sets the collection being adapted.
         /// </summary>
-        /// <param name="collection">An instance of <typeparamref name="TCollection"/>.</param>
-        void Initalize(TCollection collection);
+        TCollection Collection { get; set; }
 
         /// <summary>
         /// Gets the number of elements contained in the <typeparamref name="TCollection"/>.

@@ -61,29 +61,29 @@ namespace MementoContainer.Integration.RegisterObjectFeature.RegisterCollections
 
         private class QueueAdapter<T> : ICollectionAdapter<Queue<T>, T>
         {
-            private Queue<T> _queue;
-            public void Initalize(Queue<T> collection)
+            public Queue<T> Collection { get; set; }
+
+            public int Count
             {
-                _queue = collection;
+                get { return Collection.Count; }
             }
 
-            public int Count { get { return _queue.Count; } }
             public void Clear()
             {
-                _queue.Clear();
+                Collection.Clear();
             }
 
             public void AddRange(IEnumerable<T> items)
             {
                 foreach (var item in items)
                 {
-                    _queue.Enqueue(item);
+                    Collection.Enqueue(item);
                 }
             }
 
             public void CopyTo(T[] array, int arrayIndex)
             {
-                _queue.CopyTo(array, arrayIndex);
+                Collection.CopyTo(array, arrayIndex);
             }
         }
     }

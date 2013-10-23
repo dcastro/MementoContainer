@@ -48,7 +48,7 @@ namespace MementoContainer.Domain
                     if (Collection != null)
                     {
                         //initialize adapter
-                        adapter.Initalize(Collection);
+                        adapter.Collection = Collection;
 
                         //replace collection with adapter
                         Collection = adapter.InnerObject;

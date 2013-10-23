@@ -87,11 +87,8 @@ namespace MementoContainer.Unit.Domain
         private class InvalidAdapter : ICollectionAdapter<Stack<int>, int>
         {
             public InvalidAdapter(int i) { }
-            public void Initalize(Stack<int> collection)
-            {
-                throw new NotImplementedException();
-            }
 
+            public Stack<int> Collection { get; set; }
             public int Count { get; private set; }
             public void Clear()
             {
@@ -111,13 +108,7 @@ namespace MementoContainer.Unit.Domain
 
         private class ValidAdapter : ICollectionAdapter<Stack<int>, int>
         {
-            private Stack<int> _stack = new Stack<int>(); 
-
-            public void Initalize(Stack<int> collection)
-            {
-                _stack = collection;
-            }
-
+            public Stack<int> Collection { get; set; }
             public int Count { get; private set; }
             public void Clear()
             {

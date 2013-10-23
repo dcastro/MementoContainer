@@ -73,5 +73,19 @@ namespace MementoContainer.Utils
             result = property.GetValue(_obj);
             return true;
         }
+
+        public override bool TrySetMember(SetMemberBinder binder, object value)
+        {
+            var property = _objType
+                .GetRuntimeProperty(binder.Name);
+
+            if (property == null)
+            {
+                return false;
+            }
+
+            property.SetValue(_obj, value);
+            return true;
+        }
     }
 }
