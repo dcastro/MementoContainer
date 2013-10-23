@@ -10,7 +10,7 @@ using NUnit.Framework;
 namespace MementoContainer.Integration.RegisterObjectFeature.CollectionAdapters
 {
     [TestFixture]
-    public class ConcurrentStackAdapter
+    public class ConcurrentStackAdapterFixture
     {
         [Test]
         public void Test()

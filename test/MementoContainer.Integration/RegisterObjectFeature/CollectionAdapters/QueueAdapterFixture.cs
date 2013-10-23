@@ -9,14 +9,14 @@ using NUnit.Framework;
 namespace MementoContainer.Integration.RegisterObjectFeature.CollectionAdapters
 {
     [TestFixture]
-    public class StackAdapter
+    public class QueueAdapterFixture
     {
         [Test]
         public void Test()
         {
             Article article = new Article
             {
-                Pages = new Stack<int>(
+                Pages = new Queue<int>(
                     new[] { 1, 2, 3 })
             };
 
@@ -24,8 +24,8 @@ namespace MementoContainer.Integration.RegisterObjectFeature.CollectionAdapters
             var memento = Memento.Create()
                                  .Register(article);
 
-            article.Pages.Pop();
-            article.Pages.Pop();
+            article.Pages.Dequeue();
+            article.Pages.Dequeue();
 
             memento.Restore();
 
@@ -35,8 +35,8 @@ namespace MementoContainer.Integration.RegisterObjectFeature.CollectionAdapters
 
         private class Article
         {
-            [MementoCollection(typeof(StackAdapter<int>))]
-            public Stack<int> Pages { get; set; }
+            [MementoCollection(typeof(QueueAdapter<int>))]
+            public Queue<int> Pages { get; set; }
         }
     }
 }

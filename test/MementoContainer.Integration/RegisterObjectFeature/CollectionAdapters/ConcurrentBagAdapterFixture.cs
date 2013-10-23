@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,34 +10,35 @@ using NUnit.Framework;
 namespace MementoContainer.Integration.RegisterObjectFeature.CollectionAdapters
 {
     [TestFixture]
-    public class QueueAdapter
+    public class ConcurrentBagAdapterFixture
     {
         [Test]
         public void Test()
         {
             Article article = new Article
-            {
-                Pages = new Queue<int>(
-                    new[] { 1, 2, 3 })
-            };
+                {
+                    Pages = new ConcurrentBag<int>(
+                        new[] {1, 2, 3})
+                };
 
             //Act
             var memento = Memento.Create()
                                  .Register(article);
 
-            article.Pages.Dequeue();
-            article.Pages.Dequeue();
+            int ignore;
+            article.Pages.TryTake(out ignore);
+            article.Pages.TryTake(out ignore);
 
             memento.Restore();
 
             //Assert
-            CollectionAssert.AreEquivalent(new[] { 1, 2, 3 }, article.Pages);
+            CollectionAssert.AreEquivalent(new[] {1, 2, 3}, article.Pages);
         }
 
         private class Article
         {
-            [MementoCollection(typeof(QueueAdapter<int>))]
-            public Queue<int> Pages { get; set; }
+            [MementoCollection(typeof (ProducerConsumerCollectionAdapter<int>))]
+            public ConcurrentBag<int> Pages { get; set; }
         }
     }
 }

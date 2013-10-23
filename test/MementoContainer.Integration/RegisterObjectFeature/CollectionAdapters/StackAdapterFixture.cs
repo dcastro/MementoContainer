@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,14 +9,14 @@ using NUnit.Framework;
 namespace MementoContainer.Integration.RegisterObjectFeature.CollectionAdapters
 {
     [TestFixture]
-    public class ConcurrentBagAdapter
+    public class StackAdapterFixture
     {
         [Test]
         public void Test()
         {
             Article article = new Article
             {
-                Pages = new ConcurrentBag<int>(
+                Pages = new Stack<int>(
                     new[] { 1, 2, 3 })
             };
 
@@ -25,9 +24,8 @@ namespace MementoContainer.Integration.RegisterObjectFeature.CollectionAdapters
             var memento = Memento.Create()
                                  .Register(article);
 
-            int ignore;
-            article.Pages.TryTake(out ignore);
-            article.Pages.TryTake(out ignore);
+            article.Pages.Pop();
+            article.Pages.Pop();
 
             memento.Restore();
 
@@ -37,8 +35,8 @@ namespace MementoContainer.Integration.RegisterObjectFeature.CollectionAdapters
 
         private class Article
         {
-            [MementoCollection(typeof(ProducerConsumerCollectionAdapter<int>))]
-            public ConcurrentBag<int> Pages { get; set; }
+            [MementoCollection(typeof(StackAdapter<int>))]
+            public Stack<int> Pages { get; set; }
         }
     }
 }

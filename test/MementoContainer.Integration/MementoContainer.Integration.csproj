@@ -52,11 +52,12 @@
   </Choose>
   <ItemGroup>
     <Compile Include="RegisterCollectionFeature\RegisterCollection.cs" />
-    <Compile Include="RegisterObjectFeature\CollectionAdapters\ConcurrentBagAdapter.cs" />
-    <Compile Include="RegisterObjectFeature\CollectionAdapters\ConcurrentStackAdapter.cs" />
+    <Compile Include="RegisterObjectFeature\CollectionAdapters\BlockingCollectionAdapterFixture.cs" />
+    <Compile Include="RegisterObjectFeature\CollectionAdapters\ConcurrentBagAdapterFixture.cs" />
+    <Compile Include="RegisterObjectFeature\CollectionAdapters\ConcurrentStackAdapterFixture.cs" />
     <Compile Include="RegisterObjectFeature\CollectionAdapters\NoAdapter.cs" />
-    <Compile Include="RegisterObjectFeature\CollectionAdapters\QueueAdapter.cs" />
-    <Compile Include="RegisterObjectFeature\CollectionAdapters\StackAdapter.cs" />
+    <Compile Include="RegisterObjectFeature\CollectionAdapters\QueueAdapterFixture.cs" />
+    <Compile Include="RegisterObjectFeature\CollectionAdapters\StackAdapterFixture.cs" />
     <Compile Include="RegisterObjectFeature\DisableCascading\CascadingDefinedTwice.cs" />
     <Compile Include="RegisterObjectFeature\DisableCascading\ForProperties.cs" />
     <Compile Include="RegisterObjectFeature\InheritMementoClass.cs" />
