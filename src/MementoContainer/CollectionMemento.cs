@@ -69,8 +69,7 @@ namespace MementoContainer
             {
                 _collection.AddRange(_copy);
             }
-            else if (_collectionType.ImplementsGeneric(typeof (HashSet<>)) ||
-                     _collectionType.ImplementsGeneric(typeof (SortedSet<>)))
+            else if (_collectionType.ImplementsGeneric(typeof (ISet<>)))
             {
                 _collection.UnionWith(_copy);
             }
