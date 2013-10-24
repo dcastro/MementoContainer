@@ -52,9 +52,19 @@ namespace MementoContainer.Adapters
         /// <param name="items">The items that should be added to the <see cref="IProducerConsumerCollection{T}"/>.</param>
         public void AddRange(IEnumerable<T> items)
         {
-            foreach (var item in items)
+            //Try optimized 'AddRange' implementation if available
+            if (Collection is ConcurrentStack<T>)
             {
-                Collection.TryAdd(item);
+                var stack = Collection as ConcurrentStack<T>;
+                stack.PushRange(items.ToArray());
+            }
+            else
+            {
+                //Use the default approach - add one item at a time
+                foreach (var item in items)
+                {
+                    Collection.TryAdd(item);
+                }
             }
         }
 
