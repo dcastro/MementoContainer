@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace MementoContainer.Integration.RegisterCollectionFeature
 {
     [TestFixture]
-    public class RegisterCollection
+    public class WithoutAdapter
     {
         [Test]
         public void Test()

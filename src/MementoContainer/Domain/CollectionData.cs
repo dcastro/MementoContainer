@@ -14,6 +14,20 @@ namespace MementoContainer.Domain
         public Type ElementType { get; private set; }
         public bool Cascade { get; private set; }
 
+        public CollectionData(object adapter, bool cascade, Type elementType)
+        {
+            Collection = adapter;
+            Cascade = cascade;
+            ElementType = elementType;
+        }
+
+        public CollectionData(object collection, bool cascade)
+        {
+            Collection = collection;
+            Cascade = cascade;
+            ElementType = collection.GetType().GetCollectionElementType();
+        }
+
         public CollectionData(object collection, Type propertyType, IEnumerable<Attribute> attrs)
             : this(collection, propertyType, attrs, null)
         {
@@ -40,6 +54,28 @@ namespace MementoContainer.Domain
             Validate(collectionAttrs, propertyType);
         }
 
+        private void AdaptCollection(Type adapterType)
+        {
+            dynamic adapter;
+            try
+            {
+                adapter = new DynamicInvoker(Activator.CreateInstance(adapterType));
+            }
+            catch (MissingMemberException ex)
+            {
+                throw CollectionException.FailedAdapterActivation(adapterType, ex);
+            }
+
+            if (Collection != null)
+            {
+                //initialize adapter
+                adapter.Collection = Collection;
+
+                //replace collection with adapter
+                Collection = adapter.InnerObject;
+            }
+        }
+
         private void Validate(IEnumerable<MementoCollectionAttribute> attrs, Type propertyType)
         {
             //Checks whether the property type implements ICollection<T>.
@@ -60,25 +96,8 @@ namespace MementoContainer.Domain
 
                     hasAdapter = true;
 
-                    //create adapter
-                    dynamic adapter = null;
-                    try
-                    {
-                        adapter = new DynamicInvoker(Activator.CreateInstance(adapterType));
-                    }
-                    catch (MissingMemberException ex)
-                    {
-                        throw CollectionException.FailedAdapterActivation(adapterType, ex);
-                    }
-
-                    if (Collection != null)
-                    {
-                        //initialize adapter
-                        adapter.Collection = Collection;
-
-                        //replace collection with adapter
-                        Collection = adapter.InnerObject;
-                    }
+                    //wrap collection in adapter
+                    AdaptCollection(adapterType);
                 }
             }
 

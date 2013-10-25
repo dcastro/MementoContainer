@@ -51,7 +51,8 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="RegisterCollectionFeature\RegisterCollection.cs" />
+    <Compile Include="RegisterCollectionFeature\WithAdapter.cs" />
+    <Compile Include="RegisterCollectionFeature\WithoutAdapter.cs" />
     <Compile Include="RegisterObjectFeature\CollectionAdapters\BlockingCollectionAdapterFixture.cs" />
     <Compile Include="RegisterObjectFeature\CollectionAdapters\ConcurrentBagAdapterFixture.cs" />
     <Compile Include="RegisterObjectFeature\CollectionAdapters\ConcurrentStackAdapterFixture.cs" />

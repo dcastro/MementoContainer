@@ -29,6 +29,18 @@ namespace MementoContainer.Factories
         ICompositeMemento CreateCollectionMemento(object collection, bool cascade);
 
         /// <summary>
+        /// Creates memento components for each of the given object "owner"'s properties.
+        /// </summary>
+        /// <typeparam name="TCollection">The type of the collection being registered.</typeparam>
+        /// <typeparam name="TElement">The type of elements in the collection.</typeparam>
+        /// <param name="adapter">An adapter for a custom collection. Its <see cref="ICollectionAdapter{TCollection,TItem}.Collection"/> property should be set.</param>
+        /// <param name="cascade">Specifies whether items in this adapter's collection should be added to the container as well.</param>
+        /// <returns>A collection memento.</returns>
+        ICompositeMemento CreateCollectionMemento<TCollection, TElement>(
+            ICollectionAdapter<TCollection, TElement> adapter,
+            bool cascade);
+
+        /// <summary>
         /// Creates a memento component from a given object 'owner' and an expression that maps an instance
         /// of that object to one of its properties.
         /// <para/>

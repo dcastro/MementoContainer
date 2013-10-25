@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using MementoContainer.Analysis;
+using MementoContainer.Domain;
 using MementoContainer.Utils;
 
 namespace MementoContainer.Factories
@@ -35,12 +36,21 @@ namespace MementoContainer.Factories
                                    .Cast<ICompositeMemento>()
                                    .ToList();
 
-            return propertyMementos.Union(collectionMementos).ToList();
+            return propertyMementos.Concat(collectionMementos).ToList();
+        }
+
+        public ICompositeMemento CreateCollectionMemento<TCollection, TElement>(
+            ICollectionAdapter<TCollection, TElement> adapter,
+            bool cascade)
+        {
+            var data = new CollectionData(adapter, cascade, typeof(TElement));
+            return new CollectionMemento(data, this);
         }
 
         public ICompositeMemento CreateCollectionMemento(object collection, bool cascade)
         {
-            return new CollectionMemento(collection, cascade, this);
+            var data = new CollectionData(collection, cascade);
+            return new CollectionMemento(data, this);
         }
 
         public IMementoComponent CreateMemento<TOwner, TProp>(TOwner owner, Expression<Func<TOwner, TProp>> propertyExpression)

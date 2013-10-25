@@ -80,6 +80,18 @@ namespace MementoContainer
         IMemento RegisterCollection<T>(ICollection<T> collection);
 
         /// <summary>
+        /// Registers a custom collection though an adapter.
+        /// The adapter's 'Collection' property must be set.
+        /// After <see cref="IMemento.Restore"/> is called, the collection will contain the same elements as at the time of registration.
+        /// </summary>
+        /// 
+        /// <typeparam name="TCollection">The type of the collection being registered.</typeparam>
+        /// <typeparam name="TElement">The type of elements in the collection.</typeparam>
+        /// <param name="adapter">An adapter for a custom collection. Its 'Collection' property should be set.</param>
+        /// <returns>This IMemento instance.</returns>
+        IMemento RegisterCollection<TCollection, TElement>(ICollectionAdapter<TCollection, TElement> adapter);
+
+        /// <summary>
         /// Restores every registered property to their initially recorded value.
         /// </summary>
         void Restore();

@@ -24,31 +24,24 @@ namespace MementoContainer
 
         public IEnumerable<ICompositeMemento> Children { get; set; }
 
-        public CollectionMemento(ICollectionData data, IMementoFactory factory)
-            : this(data.Collection, data.Cascade, factory, data.ElementType)
-        {
-            
-        }
-
-        public CollectionMemento(object collection, bool cascade, IMementoFactory factory, Type elementType = null)
+        public CollectionMemento(ICollectionData data, IMementoFactory factory)    
         {
             _factory = factory;
-            _collection = new DynamicInvoker(collection);
-            _collectionType = collection.GetType();
-            _cascade = cascade;
+            _collection = new DynamicInvoker(data.Collection);
+            _collectionType = data.Collection.GetType();
+            _cascade = data.Cascade;
 
             //initialize array
             var collectionCount = _collection.Count;
-            _collectionElementType = elementType ?? _collectionType.GetCollectionElementType();
+            _collectionElementType = data.ElementType;
 
             _copy = Array.CreateInstance(_collectionElementType, collectionCount);
             SaveState();
 
+            //generate children
             Children = new List<ICompositeMemento>();
-
             if (_cascade)
                 GenerateChildren();
-
         }
 
         private void SaveState()
