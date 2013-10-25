@@ -99,6 +99,7 @@ namespace MementoContainer.Analysis
         public IList<IPropertyData> GetProperties(object obj)
         {
             Type type = obj.GetType();
+            IDictionary<PropertyInfo, IList<Attribute>> attributesMap = type.GetFullAttributesMap();
 
             //check if type has MementoClassAttribute
             if (type.IsMementoClass())
@@ -106,21 +107,20 @@ namespace MementoContainer.Analysis
                 var typeInfo = type.GetTypeInfo();
                 var mementoClassAttr = typeInfo.GetCustomAttribute<MementoClassAttribute>();
 
-                return typeInfo.DeclaredProperties
-                               .Where(p => p.HasGetAndSet())
-                               .Select(Validate)
-                               .Select(prop =>  new PropertyData(prop, mementoClassAttr, obj))
-                               .Cast<IPropertyData>()
-                               .ToList();
+                return attributesMap
+                    .Where(kv => kv.Value.Any(attr => attr is MementoPropertyAttribute) || kv.Key.HasGetAndSet())
+                    .Select(kv => kv.Key)
+                    .Select(Validate)
+                    .Select(prop => new PropertyData(prop, obj, attributesMap[prop], mementoClassAttr))
+                    .Cast<IPropertyData>()
+                    .ToList();
             }
 
-            var attributesMap = type.GetFullAttributesMap();
-            
             return attributesMap
                 .Where(kv => kv.Value.Any(attr => attr is MementoPropertyAttribute))
                 .Select(kv => kv.Key)
                 .Select(Validate)
-                .Select(prop => new PropertyData(prop, attributesMap[prop], obj))
+                .Select(prop => new PropertyData(prop, obj, attributesMap[prop]))
                 .Cast<IPropertyData>()
                 .ToList();
         }

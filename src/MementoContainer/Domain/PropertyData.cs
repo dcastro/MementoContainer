@@ -13,19 +13,28 @@ namespace MementoContainer.Domain
         public object Owner { get; private set; }
         public bool Cascade { get; private set; }
 
-        public PropertyData(PropertyInfo property, IEnumerable<Attribute> attrs, object owner)
+        public PropertyData(PropertyInfo property, object owner, IEnumerable<Attribute> attrs, MementoClassAttribute mementoClassAttr)
             : this(property, owner)
         {
-            var propertiesAttrs = attrs.OfType<MementoPropertyAttribute>();
+            var propertiesAttrs = attrs.OfType<MementoPropertyAttribute>().ToList();
 
-            Cascade = propertiesAttrs.All(a => a.Cascade);
+            //If there are any method-level attributes, use those to decide whether 'cascading' should be performed.
+            if (propertiesAttrs.Any())
+            {
+                Cascade = propertiesAttrs.All(a => a.Cascade);
+            }
+            else if (mementoClassAttr != null)//otherwise, use the class-level attribute
+            {
+                Cascade = mementoClassAttr.Cascade;
+            }
         }
 
-        public PropertyData(PropertyInfo property, MementoClassAttribute attr, object owner)
-            : this(property, owner)
+        public PropertyData(PropertyInfo property, object owner, IEnumerable<Attribute> attrs)
+            : this(property, owner, attrs, null)
         {
-            Cascade = attr.Cascade;
+
         }
+
 
         private PropertyData(PropertyInfo property, object owner)
         {
