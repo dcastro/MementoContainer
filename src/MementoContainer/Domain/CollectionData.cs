@@ -14,6 +14,32 @@ namespace MementoContainer.Domain
         public Type ElementType { get; private set; }
         public bool Cascade { get; private set; }
 
+        public CollectionData(object collection, Type propertyType, IEnumerable<Attribute> attrs)
+            : this(collection, propertyType, attrs, null)
+        {
+
+        }
+
+        public CollectionData(object collection, Type propertyType, IEnumerable<Attribute> attrs,
+                              MementoClassAttribute mementoClassAttr)
+        {
+            Collection = collection;
+
+            var collectionAttrs = attrs.OfType<MementoCollectionAttribute>().ToList();
+
+            //If there are any method-level attributes, use those to decide whether 'cascading' should be performed.
+            if (collectionAttrs.Any())
+            {
+                Cascade = collectionAttrs.All(a => a.Cascade);
+            }
+            else if (mementoClassAttr != null)//otherwise, use the class-level attribute
+            {
+                Cascade = mementoClassAttr.Cascade;
+            }
+
+            Validate(collectionAttrs, propertyType);
+        }
+
         private void Validate(IEnumerable<MementoCollectionAttribute> attrs, Type propertyType)
         {
             //Checks whether the property type implements ICollection<T>.
@@ -89,22 +115,6 @@ namespace MementoContainer.Domain
             {
                 throw CollectionException.AdapterTypeMismatch(adapterType, boundGenericType, propertyType);
             }
-        }
-
-        public CollectionData(object collection, Type propertyType, IEnumerable<Attribute> attrs)
-        {
-            Collection = collection;
-
-            var collectionAttrs = attrs.OfType<MementoCollectionAttribute>().ToList();
-            Cascade = collectionAttrs.All(a => a.Cascade);
-
-            Validate(collectionAttrs, propertyType);
-        }
-
-        public CollectionData(object collection, MementoClassAttribute attr)
-        {
-            Collection = collection;
-            Cascade = attr.Cascade;
         }
     }
 }

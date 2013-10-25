@@ -75,6 +75,7 @@
     <Compile Include="RegisterObjectFeature\RegisterCollections\CollectionOfCollections.cs" />
     <Compile Include="RegisterObjectFeature\DisableCascading\ForCollections.cs" />
     <Compile Include="RegisterObjectFeature\RegisterCollections\NullCollection.cs" />
+    <Compile Include="RegisterObjectFeature\RegisterCollections\OverrideMementoClass.cs" />
     <Compile Include="RegisterObjectFeature\RegisterCollections\RegisterCollectionItems.cs" />
     <Compile Include="RegisterObjectFeature\RegisterCollections\RegisterSet.cs" />
     <Compile Include="RegisterObjectFeature\StaticProperties.cs" />
