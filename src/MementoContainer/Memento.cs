@@ -72,8 +72,8 @@ namespace MementoContainer
         /// <returns>This IMemento instance.</returns>
         public IMemento RegisterProperty<TOwner, TProp>(TOwner owner, Expression<Func<TOwner, TProp>> propertyExpression)
         {
-            Method.Requires<ArgumentNullException>(owner != null);
-            Method.Requires<ArgumentNullException>(propertyExpression != null);
+            owner.ThrowIfNull("owner");
+            propertyExpression.ThrowIfNull("propertyExpression");
 
             var memento = Factory.CreateMemento(owner, propertyExpression);
             Components.Add(memento);
@@ -99,7 +99,7 @@ namespace MementoContainer
         /// <returns>This IMemento instance.</returns>
         public IMemento RegisterProperty<TProp>(Expression<Func<TProp>> propertyExpression)
         {
-            Method.Requires<ArgumentNullException>(propertyExpression != null);
+            propertyExpression.ThrowIfNull("propertyExpression");
 
             var memento = Factory.CreateMemento(propertyExpression);
             Components.Add(memento);
@@ -126,7 +126,7 @@ namespace MementoContainer
         /// <returns>This IMemento instance.</returns>
         public IMemento Register(object obj)
         {
-            Method.Requires<ArgumentNullException>(obj != null);
+            obj.ThrowIfNull("obj");
 
             var mementos = Factory.CreateMementos(obj);
 
@@ -148,7 +148,7 @@ namespace MementoContainer
         /// <returns>This IMemento instance.</returns>
         public IMemento RegisterCollection<T>(ICollection<T> collection)
         {
-            Method.Requires<ArgumentNullException>(collection != null);
+            collection.ThrowIfNull("collection");
 
             var memento = Factory.CreateCollectionMemento(collection, false);
 
@@ -168,8 +168,9 @@ namespace MementoContainer
         /// <returns>This IMemento instance.</returns>
         public IMemento RegisterCollection<TCollection, TElement>(ICollectionAdapter<TCollection, TElement> adapter)
         {
-            Method.Requires<ArgumentNullException>(adapter != null);
-            Method.Requires<ArgumentNullException>(adapter.Collection != null);
+            adapter.ThrowIfNull("adapter");
+            if(adapter.Collection == null)
+                throw new ArgumentException("The adapter's Collection property must not be null.", "adapter");
 
             var memento = Factory.CreateCollectionMemento(adapter, false);
 
