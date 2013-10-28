@@ -29,7 +29,7 @@ namespace MementoContainer.Factories
         ICompositeMemento CreateCollectionMemento(object collection, bool cascade);
 
         /// <summary>
-        /// Creates memento components for each of the given object "owner"'s properties.
+        /// Creates a collection memento for the given collection object.
         /// </summary>
         /// <typeparam name="TCollection">The type of the collection being registered.</typeparam>
         /// <typeparam name="TElement">The type of elements in the collection.</typeparam>

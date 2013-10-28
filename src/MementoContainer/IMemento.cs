@@ -52,9 +52,9 @@ namespace MementoContainer
         IMemento RegisterProperty<TProp>(Expression<Func<TProp>> propertyExpression);
 
         /// <summary>
-        /// Registers properties of a given object.
-        /// If the object's type has the MementoClass attribute defined, all properties declaring get and set accessors are registered.
-        /// Otherwise, only properties with the MementoProperty and/or MementoCollection attributes will be registered.
+        /// Registers properties/collections of a given object.
+        /// If the object's type has the MementoClass attribute defined, all properties declaring get and set accessors and collections are registered.
+        /// Otherwise, only properties/collections with the MementoProperty and/or MementoCollection attributes will be registered.
         /// </summary>
         /// 
         /// <exception cref="PropertyException">
@@ -62,7 +62,9 @@ namespace MementoContainer
         /// </exception>
         /// 
         /// <exception cref="CollectionException">
-        /// All properties that have the <see cref="MementoCollectionAttribute"/> defined must implement <see cref="ICollection{T}"/>.
+        /// All properties that have the <see cref="MementoCollectionAttribute"/> defined must either implement <see cref="ICollection{T}"/> 
+        /// or provide an <see cref="ICollectionAdapter{TCollection,TItem}"/> through the attribute constructor.
+        /// The adapter must be an instantiable type and have a public parameterless constructor.
         /// </exception>
         /// 
         /// <param name="obj">The object whose properties are being registered.</param>

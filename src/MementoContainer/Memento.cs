@@ -107,13 +107,19 @@ namespace MementoContainer
         }
 
         /// <summary>
-        /// Registers properties of a given object.
-        /// If the object's type has the MementoClass attribute defined, all properties declaring get and set accessors are registered.
-        /// Otherwise, only properties with the MementoProperty attribute will be registered.
+        /// Registers properties/collections of a given object.
+        /// If the object's type has the MementoClass attribute defined, all properties declaring get and set accessors and collections are registered.
+        /// Otherwise, only properties/collections with the MementoProperty and/or MementoCollection attributes will be registered.
         /// </summary>
         /// 
         /// <exception cref="PropertyException">
-        /// All properties being registered must declare get and set accessors.
+        /// All properties that have the <see cref="MementoPropertyAttribute"/> defined must declare get and set accessors.
+        /// </exception>
+        /// 
+        /// <exception cref="CollectionException">
+        /// All properties that have the <see cref="MementoCollectionAttribute"/> defined must either implement <see cref="ICollection{T}"/> 
+        /// or provide an <see cref="ICollectionAdapter{TCollection,TItem}"/> through the attribute constructor.
+        /// The adapter must be an instantiable type and have a public parameterless constructor.
         /// </exception>
         /// 
         /// <param name="obj">The object whose properties are being registered.</param>
@@ -163,6 +169,7 @@ namespace MementoContainer
         public IMemento RegisterCollection<TCollection, TElement>(ICollectionAdapter<TCollection, TElement> adapter)
         {
             Method.Requires<ArgumentNullException>(adapter != null);
+            Method.Requires<ArgumentNullException>(adapter.Collection != null);
 
             var memento = Factory.CreateCollectionMemento(adapter, false);
 
