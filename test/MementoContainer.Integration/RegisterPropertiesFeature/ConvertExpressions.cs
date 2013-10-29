@@ -26,7 +26,7 @@ namespace MementoContainer.Integration.RegisterPropertiesFeature
 
             ((Person)article.Author).Name = "No one";
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreEqual("DCastro", ((Person)article.Author).Name);
         }
@@ -47,7 +47,7 @@ namespace MementoContainer.Integration.RegisterPropertiesFeature
 
             ((Person)article.Author).Name = "No one";
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreEqual("DCastro", ((Person)article.Author).Name);
         }

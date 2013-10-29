@@ -33,7 +33,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature.RegisterCollections
             article.Authors = null;
             author.Name = "No one";
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.NotNull(article.Authors);
             Assert.AreEqual(1, article.Authors.Count);

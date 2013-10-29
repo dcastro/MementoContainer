@@ -22,7 +22,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature
             author.Name = "No one";
             article.Author = new Author {Name = "No one"};
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreSame(author, article.Author);
             Assert.AreEqual("DCastro", article.Author.Name);

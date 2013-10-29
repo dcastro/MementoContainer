@@ -22,7 +22,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature.RegisterCollections
             var memento = Memento.Create()
                                  .Register(article);
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.True(((SetMock<int>)article.Pages).UnionWithCalled);
         }

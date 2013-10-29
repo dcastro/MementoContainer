@@ -47,12 +47,12 @@ namespace MementoContainer
                 GenerateChildren();
         }
 
-        public void Restore()
+        public void Rollback()
         {
             Property.SetValue(Owner, SavedValue);
             foreach (var child in Children)
             {
-                child.Restore();
+                child.Rollback();
             }
         }
 

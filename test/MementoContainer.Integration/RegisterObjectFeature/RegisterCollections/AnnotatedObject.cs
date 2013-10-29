@@ -30,7 +30,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature.RegisterCollections
             article.Authors.Remove("b");
             article.Authors.Add("d");
 
-            memento.Restore();
+            memento.Rollback();
 
             CollectionAssert.AreEqual(new List<int> { 1, 2, 3 }, article.Ids);
             CollectionAssert.AreEqual(new List<string> { "a", "b", "c" }, article.Authors);

@@ -19,7 +19,7 @@ namespace MementoContainer
         /// <summary>
         /// Specifies that all properties of this class declaring get and set accessors
         /// should be recorded within the memento container.
-        /// After <see cref="IMemento.Restore"/> is called, these properties will be set to their original values.
+        /// After <see cref="IMemento.Rollback"/> is called, these properties will be set to their original values.
         /// </summary>
         /// <param name="cascade">Specifies whether these properties' values should be added to the container as well.</param>
         public MementoClassAttribute(bool cascade = true)

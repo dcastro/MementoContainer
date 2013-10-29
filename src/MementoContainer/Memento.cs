@@ -140,7 +140,7 @@ namespace MementoContainer
 
         /// <summary>
         /// Registers a collection.
-        /// After <see cref="IMemento.Restore"/> is called, the collection will contain the same elements as at the time of registration.
+        /// After <see cref="IMemento.Rollback"/> is called, the collection will contain the same elements as at the time of registration.
         /// </summary>
         /// 
         /// <typeparam name="T">The type of the elements in the collection.</typeparam>
@@ -159,7 +159,7 @@ namespace MementoContainer
         /// <summary>
         /// Registers a custom collection though an adapter.
         /// The adapter's 'Collection' property must be set.
-        /// After <see cref="IMemento.Restore"/> is called, the collection will contain the same elements as at the time of registration.
+        /// After <see cref="IMemento.Rollback"/> is called, the collection will contain the same elements as at the time of registration.
         /// </summary>
         /// 
         /// <typeparam name="TCollection">The type of the collection being registered.</typeparam>
@@ -181,11 +181,11 @@ namespace MementoContainer
         /// <summary>
         /// Restores every registered property to their initially recorded value.
         /// </summary>
-        public void Restore()
+        public void Rollback()
         {
             foreach (var memento in Components)
             {
-                memento.Restore();
+                memento.Rollback();
             }
         }
     }

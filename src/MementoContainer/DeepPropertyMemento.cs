@@ -52,7 +52,7 @@ namespace MementoContainer
             return Links.Aggregate(Owner, (currentOwner, prop) => prop.GetValue(currentOwner));
         }
 
-        public void Restore()
+        public void Rollback()
         {
             object lastOwner = ResolveLinks();
             Property.SetValue(lastOwner, SavedValue);

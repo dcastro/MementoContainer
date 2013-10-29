@@ -124,11 +124,11 @@ namespace MementoContainer.Unit
             Memento.Components = components;
 
             //Act
-            Memento.Restore();
+            Memento.Rollback();
 
             //Assert
-            componentMock1.Verify(c => c.Restore(), Times.Once());
-            componentMock2.Verify(c => c.Restore(), Times.Once());
+            componentMock1.Verify(c => c.Rollback(), Times.Once());
+            componentMock2.Verify(c => c.Rollback(), Times.Once());
         }
     }
 }

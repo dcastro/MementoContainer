@@ -31,7 +31,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature.CollectionAdapters
             article.Pages.TryTake(out ignore);
             article.Pages.TryTake(out ignore);
 
-            memento.Restore();
+            memento.Rollback();
 
             //Assert
             CollectionAssert.AreEquivalent(new[] {1, 2, 3}, article.Pages);
@@ -57,7 +57,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature.CollectionAdapters
             article.Pages.TryTake(out ignore);
             article.Pages.CompleteAdding();
 
-            memento.Restore();
+            memento.Rollback();
 
             //Assert
             CollectionAssert.AreEquivalent(new[] {3}, article.Pages);

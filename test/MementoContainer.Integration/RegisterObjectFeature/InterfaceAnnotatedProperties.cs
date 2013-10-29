@@ -21,7 +21,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature
             (article as Article).Title = "Something else";
             (article as Article).Id = 2;
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreEqual("Draft", article.Title);
             Assert.AreEqual(1, (article as Article).Id);

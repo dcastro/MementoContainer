@@ -29,7 +29,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature.CollectionAdapters
             article.Pages.TryPop(out ignore);
             article.Pages.TryPop(out ignore);
 
-            memento.Restore();
+            memento.Rollback();
 
             //Assert
             CollectionAssert.AreEquivalent(new[] {1, 2, 3}, article.Pages);

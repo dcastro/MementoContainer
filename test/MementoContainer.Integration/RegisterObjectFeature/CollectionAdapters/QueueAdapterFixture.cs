@@ -27,7 +27,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature.CollectionAdapters
             article.Pages.Dequeue();
             article.Pages.Dequeue();
 
-            memento.Restore();
+            memento.Rollback();
 
             //Assert
             CollectionAssert.AreEquivalent(new[] { 1, 2, 3 }, article.Pages);

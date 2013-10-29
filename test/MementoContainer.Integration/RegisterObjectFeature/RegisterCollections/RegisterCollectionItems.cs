@@ -28,7 +28,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature.RegisterCollections
 
             author.Name = "No one";
 
-            memento.Restore();
+            memento.Rollback();
 
             CollectionAssert.AreEqual("DCastro", article.Authors.First().Name);
         }

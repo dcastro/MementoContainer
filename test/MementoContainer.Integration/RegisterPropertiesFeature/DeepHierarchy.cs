@@ -21,7 +21,7 @@ namespace MementoContainer.Integration.RegisterPropertiesFeature
 
             article.Author = new Author { Name = "No one" };
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreEqual("DCastro", article.Author.Name);
         }

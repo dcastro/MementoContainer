@@ -49,7 +49,7 @@ namespace MementoContainer
             _collection.CopyTo(_copy, 0);
         }
 
-        public void Restore()
+        public void Rollback()
         {
             _collection.Clear();
 
@@ -74,10 +74,10 @@ namespace MementoContainer
                 }
             }
 
-            //Restore children
+            //Rollback children
             foreach (var child in Children)
             {
-                child.Restore();
+                child.Rollback();
             }
         }
 

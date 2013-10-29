@@ -19,7 +19,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature
                                  .Register(article);
 
             article.Title = "Something else";
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreEqual("Draft", article.Title);
         }

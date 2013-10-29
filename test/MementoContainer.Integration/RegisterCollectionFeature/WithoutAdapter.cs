@@ -26,7 +26,7 @@ namespace MementoContainer.Integration.RegisterCollectionFeature
 
             articles.Remove(article2);
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreEqual(2, articles.Count);
             CollectionAssert.Contains(articles, article1);

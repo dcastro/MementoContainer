@@ -27,7 +27,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature
             author1.Name = "No one";
             author2.Name = "No one";
 
-            memento.Restore();
+            memento.Rollback();
 
             CollectionAssert.AreEqual(new[] {author1, author2}, article.Authors);
             Assert.AreEqual("DCastro", author1.Name);
@@ -50,7 +50,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature
             mainAuthor.Name = "No one";
             article.MainAuthor = new Author();
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreSame(mainAuthor, article.MainAuthor);
             Assert.AreEqual("DCastro", mainAuthor.Name);

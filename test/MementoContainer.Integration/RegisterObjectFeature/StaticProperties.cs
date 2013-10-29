@@ -21,7 +21,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature
 
             Article.Count++;
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreEqual(1, Article.Count);
         }

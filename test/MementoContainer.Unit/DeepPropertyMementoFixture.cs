@@ -73,7 +73,7 @@ namespace MementoContainer.Unit
             memento.SavedValue = FinalVal;
 
             //Act
-            memento.Restore();
+            memento.Rollback();
 
             //Assert
             property.Verify(p => p.SetValue(link2Val, FinalVal), Times.Once());

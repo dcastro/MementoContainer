@@ -68,12 +68,12 @@ namespace MementoContainer.Unit
             propertyMemento.Children = children;
 
             //Act
-            propertyMemento.Restore();
+            propertyMemento.Rollback();
 
             //Assert
             propertyMock.Verify(p => p.SetValue(obj, InitialVal), Times.Once());
-            child1.Verify(c => c.Restore(), Times.Once());
-            child2.Verify(c => c.Restore(), Times.Once());
+            child1.Verify(c => c.Rollback(), Times.Once());
+            child2.Verify(c => c.Rollback(), Times.Once());
             
         }
     }

@@ -15,7 +15,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature
 
             article.Title = "Something else";
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreEqual("Draft", article.Title);
         }
@@ -30,7 +30,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature
 
             article.Id = 2;
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreEqual(2, article.Id);
         }

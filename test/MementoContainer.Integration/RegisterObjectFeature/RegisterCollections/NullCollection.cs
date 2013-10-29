@@ -23,7 +23,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature.RegisterCollections
 
             article.Ids = new List<int> {1};
 
-            memento.Restore();
+            memento.Rollback();
 
             CollectionAssert.AreEqual(new List<int> {1}, article.Ids);
         }

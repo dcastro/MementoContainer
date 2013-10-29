@@ -19,7 +19,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature.DisableCascading
 
             author.Name = "No one";
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreEqual("No one", article.Author.Name);
         }
@@ -38,7 +38,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature.DisableCascading
 
             author.Name = "No one";
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreEqual("No one", article.Author.Name);
         }

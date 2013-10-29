@@ -14,7 +14,7 @@ try
 }
 catch(FormattingException)
 {
-   memento.Restore(); //Et voilà!
+   memento.Rollback(); //Et voilà!
 }
 
 ```
@@ -76,7 +76,7 @@ try
 }
 catch(DBException)
 {
-   memento.Restore();   //Name is now "Draft" and ReleaseDate is null
+   memento.Rollback();   //Name is now "Draft" and ReleaseDate is null
 }
 ```
 

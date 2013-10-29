@@ -18,7 +18,7 @@ namespace MementoContainer
         /// <summary>
         /// Specifies that this property should be recorded within the memento container
         /// whenever an object of the containing type is registered.
-        /// After <see cref="IMemento.Restore"/> is called, this property will be set to its original value.
+        /// After <see cref="IMemento.Rollback"/> is called, this property will be set to its original value.
         /// </summary>
         /// <param name="cascade">Specifies whether this property' value should be added to the container as well.</param>
         public MementoPropertyAttribute(bool cascade = true)
