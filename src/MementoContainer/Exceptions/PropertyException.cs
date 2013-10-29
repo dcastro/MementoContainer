@@ -10,7 +10,7 @@ namespace MementoContainer
     /// <summary>
     /// Thrown when a property that doesn't declare both get or set accessors is supplied.
     /// </summary>
-    public class PropertyException : Exception
+    public class PropertyException : MementoException
     {
         private PropertyException(string msg)
             : base(msg)

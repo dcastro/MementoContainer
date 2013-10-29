@@ -60,6 +60,7 @@
     <Compile Include="Domain\PropertyData.cs" />
     <Compile Include="Exceptions\CollectionException.cs" />
     <Compile Include="Exceptions\InvalidExpressionException.cs" />
+    <Compile Include="Exceptions\MementoException.cs" />
     <Compile Include="Exceptions\PropertyException.cs" />
     <Compile Include="Factories\IMementoFactory.cs" />
     <Compile Include="Factories\MementoFactory.cs" />

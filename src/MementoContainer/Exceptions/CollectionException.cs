@@ -10,7 +10,7 @@ namespace MementoContainer
     /// <summary>
     /// Thrown when a property with the MementoCollection attribute does not implement <see cref="ICollection{T}"/>
     /// </summary>
-    public class CollectionException : Exception
+    public class CollectionException : MementoException
     {
         private CollectionException(string msg)
             : base(msg)
