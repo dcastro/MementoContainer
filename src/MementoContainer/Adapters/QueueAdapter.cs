@@ -9,7 +9,7 @@ namespace MementoContainer.Adapters
     /// <summary>
     /// Wraps a <see cref="Queue{T}"/> instance, allowing the memento container to read/restore its state.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of the elements in the queue.</typeparam>
     public class QueueAdapter<T> : ICollectionAdapter<Queue<T>, T>
     {
         /// <summary>

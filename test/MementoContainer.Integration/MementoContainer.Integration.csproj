@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="RegisterCollectionFeature\WithAdapter.cs" />
     <Compile Include="RegisterCollectionFeature\WithoutAdapter.cs" />
+    <Compile Include="RegisterObjectFeature\CollectionAdapters\ArrayAdapterFixture.cs" />
     <Compile Include="RegisterObjectFeature\CollectionAdapters\BlockingCollectionAdapterFixture.cs" />
     <Compile Include="RegisterObjectFeature\CollectionAdapters\ConcurrentBagAdapterFixture.cs" />
     <Compile Include="RegisterObjectFeature\CollectionAdapters\ConcurrentStackAdapterFixture.cs" />

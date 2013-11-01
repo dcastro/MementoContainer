@@ -11,7 +11,7 @@ namespace MementoContainer.Adapters
     /// Wraps a <see cref="IProducerConsumerCollection{T}"/> instance, allowing the memento container to read/restore its state.
     /// As follows, this adapter can be used for <see cref="ConcurrentStack{T}"/>, <see cref="ConcurrentQueue{T}"/> and <see cref="ConcurrentBag{T}"/>.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of the elements in the colection.</typeparam>
     public class ProducerConsumerCollectionAdapter<T> : ICollectionAdapter<IProducerConsumerCollection<T>, T>
     {
         /// <summary>

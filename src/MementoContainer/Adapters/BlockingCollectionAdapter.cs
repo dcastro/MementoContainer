@@ -11,7 +11,7 @@ namespace MementoContainer.Adapters
     /// Wraps a <see cref="BlockingCollection{T}"/> instance, allowing the memento container to read/restore its state.
     /// If the <see cref="BlockingCollection{T}.CompleteAdding"/> has been called, then the adapter will fail silently and thus, the state won't be restored.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of the elements in the collection.</typeparam>
     public class BlockingCollectionAdapter<T> : ICollectionAdapter<BlockingCollection<T>, T>
     {
         /// <summary>

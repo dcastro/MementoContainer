@@ -9,7 +9,7 @@ namespace MementoContainer.Adapters
     /// <summary>
     /// Wraps a <see cref="Stack{T}"/> instance, allowing the memento container to read/restore its state.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of the elements in the stack.</typeparam>
     public class StackAdapter<T> : ICollectionAdapter<Stack<T>, T>
     {
         /// <summary>

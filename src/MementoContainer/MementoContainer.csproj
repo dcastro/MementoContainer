@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adapters\ArrayAdapter.cs" />
     <Compile Include="Adapters\BlockingCollectionAdapter.cs" />
     <Compile Include="Adapters\ProducerConsumerCollectionAdapter.cs" />
     <Compile Include="Adapters\QueueAdapter.cs" />
