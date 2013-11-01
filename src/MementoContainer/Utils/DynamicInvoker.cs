@@ -31,7 +31,22 @@ namespace MementoContainer.Utils
             var methods = _objType
                 .GetRuntimeMethods()
                 .Where(m => m.Name == binder.Name);
-            
+
+            if (!TryInvokeMember(binder, args, out result, methods))
+            {
+                var interfaceMethods = _objType.GetTypeInfo()
+                                               .ImplementedInterfaces
+                                               .SelectMany(intf => intf.GetRuntimeMethods())
+                                               .Where(m => m.Name == binder.Name);
+                return TryInvokeMember(binder, args, out result, interfaceMethods);
+            }
+
+            return true;
+        }
+
+        private bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result,
+                                     IEnumerable<MethodInfo> methods)
+        {
             foreach (var method in methods)
             {
                 //Let TargetInvocationException (thrown by the called method) bubble up
@@ -61,23 +76,21 @@ namespace MementoContainer.Utils
                 return true;
             }
 
-            var property = _objType
-                .GetRuntimeProperty(binder.Name);
+            var property = FindProperty(binder.Name);
 
-            if (property == null)
+            if (property != null)
             {
-                result = null;
-                return false;
+                result = property.GetValue(_obj);
+                return true;
             }
 
-            result = property.GetValue(_obj);
-            return true;
+            result = null;
+            return false;
         }
 
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            var property = _objType
-                .GetRuntimeProperty(binder.Name);
+            var property = FindProperty(binder.Name);
 
             if (property == null)
             {
@@ -86,6 +99,22 @@ namespace MementoContainer.Utils
 
             property.SetValue(_obj, value);
             return true;
+        }
+
+        /// <summary>
+        /// Try to find the property in the inner object's type.
+        /// If it can't be found, it inspects the interfaces for explicitly implemented properties.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <returns>The requested property.</returns>
+        private PropertyInfo FindProperty(string name)
+        {
+            return _objType
+                       .GetRuntimeProperty(name) ??
+                   _objType.GetTypeInfo()
+                           .ImplementedInterfaces
+                           .Select(intf => intf.GetRuntimeProperty(name))
+                           .FirstOrDefault(m => m != null);
         }
     }
 }
