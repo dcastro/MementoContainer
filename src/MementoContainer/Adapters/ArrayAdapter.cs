@@ -10,7 +10,7 @@ namespace MementoContainer.Adapters
     /// Wraps an array, allowing the memento container to read/restore its state.
     /// </summary>
     /// <typeparam name="T">The type of the elements in the array.</typeparam>
-    public class ArrayAdapter<T> : ICollectionAdapter<T[], T>
+    internal class ArrayAdapter<T> : ICollectionAdapter<T[], T>
     {
         /// <summary>
         /// Gets or sets the collection being adapted.

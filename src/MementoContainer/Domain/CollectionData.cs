@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using MementoContainer.Adapters;
 using MementoContainer.Utils;
 
 namespace MementoContainer.Domain
@@ -26,6 +27,8 @@ namespace MementoContainer.Domain
             Collection = collection;
             Cascade = cascade;
             ElementType = collection.GetType().GetCollectionElementType();
+
+            AdaptIfArray();
         }
 
         public CollectionData(object collection, Type propertyType, IEnumerable<Attribute> attrs)
@@ -46,12 +49,39 @@ namespace MementoContainer.Domain
             {
                 Cascade = collectionAttrs.All(a => a.Cascade);
             }
-            else if (mementoClassAttr != null)//otherwise, use the class-level attribute
+            else if (mementoClassAttr != null) //otherwise, use the class-level attribute
             {
                 Cascade = mementoClassAttr.Cascade;
             }
 
-            Validate(collectionAttrs, propertyType);
+            if (!AdaptIfArray())
+                Validate(collectionAttrs, propertyType);
+        }
+
+        /// <summary>
+        /// Checks if the collection is an array - if it is, wrap it in an ArrayAdapter.
+        /// This is needed because, even though arrays implement <see cref="ICollection{T}"/>,
+        /// some of its methods (like Add) throw an exception.
+        /// </summary>
+        /// <returns></returns>
+        private bool AdaptIfArray()
+        {
+            if (Collection == null)
+                return false;
+
+            var type = Collection.GetType();
+
+            if (!type.IsArray)
+                return false;
+
+            //get array element type
+            ElementType = type.GetElementType();
+            
+            //create a matching adapter
+            var adapterType = typeof (ArrayAdapter<>).MakeGenericType(ElementType);
+            AdaptCollection(adapterType);
+
+            return true;
         }
 
         private void AdaptCollection(Type adapterType)

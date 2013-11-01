@@ -32,9 +32,24 @@ namespace MementoContainer.Integration.RegisterObjectFeature.CollectionAdapters
             CollectionAssert.AreEquivalent(new[] { 1, 2, 3 }, article.Pages);
         }
 
+        [Test]
+        public void TestRegisterCollection()
+        {
+            int[] numbers = {1, 2, 3};
+
+            var memento = Memento.Create()
+                                 .RegisterCollection(numbers);
+
+            numbers[1] = 9;
+
+            memento.Rollback();
+
+            CollectionAssert.AreEqual(new[] {1,2,3}, numbers);
+        }
+
         private class Article
         {
-            [MementoCollection(typeof(ArrayAdapter<int>))]
+            [MementoCollection]
             public int[] Pages { get; set; }
         }
     }
