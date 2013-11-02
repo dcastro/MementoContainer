@@ -39,11 +39,8 @@ namespace MementoContainer.Adapters
         /// <param name="items">The items that should be added to the array.</param>
         public void AddRange(IEnumerable<T> items)
         {
-            int index = 0;
-            foreach (var item in items)
-            {
-                Collection[index++] = item;
-            }
+            var arr = (T[]) items;
+            arr.CopyTo(Collection, 0);
         }
 
         /// <summary>
