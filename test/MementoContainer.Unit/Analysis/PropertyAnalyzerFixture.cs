@@ -18,6 +18,7 @@ namespace MementoContainer.Unit.Analysis
         #region Fixture
         private class Article
         {
+            public string GetSetProperty { get; set; }
             public string GetOnlyProperty { get { return ""; } }
             public int Field = 0;
             public static int StaticField = 0;
@@ -32,16 +33,17 @@ namespace MementoContainer.Unit.Analysis
                 return 0;
             }
         }
-        #endregion
 
         private class Magazine
         {
-            public IList<Article> Articles { get; set; }
-
             [MementoProperty]
-            public string GetOnly { get { return ""; } }
-        }
+            public Article GetOnlyProperty { get { return _article; } }
+            private readonly Article _article = new Article();
 
+            public IList<Article> Articles { get; set; }
+        }
+        #endregion
+        
         /// <summary>
         /// Tests that an exception is thrown when an expression containing method calls is supplied.
         /// </summary>
@@ -125,10 +127,29 @@ namespace MementoContainer.Unit.Analysis
         public void TestGetOnlyProperty()
         {
             var ex = Assert.Throws<PropertyException>(() => Analyzer.GetProperties(new Magazine()));
-            StringAssert.Contains("accessors", ex.Message);
+            StringAssert.Contains("set accessor", ex.Message);
 
-            ex = Assert.Throws<PropertyException>(() => Analyzer.GetProperties((Magazine m) => m.GetOnly));
-            StringAssert.Contains("accessors", ex.Message);
+            ex = Assert.Throws<PropertyException>(() => Analyzer.GetProperties((Magazine m) => m.GetOnlyProperty));
+            StringAssert.Contains("set accessor", ex.Message);
+        }
+
+        /// <summary>
+        /// Tests that, in a property chain, the links don't need a set accessor
+        /// </summary>
+        [Test]
+        public void TestChainLinksDontNeedSetter()
+        {
+            Assert.DoesNotThrow(() => Analyzer.GetProperties((Magazine m) => m.GetOnlyProperty.GetSetProperty));
+        }
+
+        /// <summary>
+        /// Tests that, in a property chain, the target needs a set accessor
+        /// </summary>
+        [Test]
+        public void TestChainTargetNeedsSetter()
+        {
+            var ex = Assert.Throws<PropertyException>(() => Analyzer.GetProperties((Magazine m) => m.GetOnlyProperty.GetOnlyProperty));
+            StringAssert.Contains("set accessor", ex.Message);
         }
     }
 }

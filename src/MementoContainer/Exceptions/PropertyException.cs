@@ -22,5 +22,17 @@ namespace MementoContainer
             string message = string.Format("Property '{0}' must declare get and set accessors.", property.Name);
             return new PropertyException(message);
         }
+
+        internal static PropertyException MissingGetAccessor(PropertyInfo property)
+        {
+            string message = string.Format("Property '{0}' must declare a get accessor.", property.Name);
+            return new PropertyException(message);
+        }
+
+        internal static PropertyException MissingSetAccessor(PropertyInfo property)
+        {
+            string message = string.Format("Property '{0}' must declare a set accessor.", property.Name);
+            return new PropertyException(message);
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace MementoContainer.Analysis
 
         private IList<IPropertyAdapter> GetProperties(Expression expression, bool hasParameter)
         {
-            var props = new List<IPropertyAdapter>();
+            var props = new List<PropertyInfo>();
 
             while (expression != null)
             {
@@ -36,7 +36,7 @@ namespace MementoContainer.Analysis
                 var memberExp = expression as MemberExpression;
                 var prop = memberExp.Member as PropertyInfo;
 
-                props.Insert(0, Wrap(prop));
+                props.Insert(0, prop);
 
                 expression = memberExp.Expression;
             }
@@ -46,7 +46,9 @@ namespace MementoContainer.Analysis
             if (hasParameter && expression == null)
                 throw InvalidExpressionException.UnexpectedOperation;
 
-            return props;
+            Validate(props);
+
+            return props.Select(Wrap).ToList();
         }
 
         /// <summary>
@@ -126,13 +128,13 @@ namespace MementoContainer.Analysis
         }
 
         /// <summary>
-        /// Validates and wraps a property in an adapter
+        /// Wraps a property in an adapter
         /// </summary>
         /// <param name="property"></param>
         /// <returns></returns>
         private IPropertyAdapter Wrap(PropertyInfo property)
         {
-            return new PropertyInfoAdapter(Validate(property));
+            return new PropertyInfoAdapter(property);
         }
 
         private PropertyInfo Validate(PropertyInfo property)
@@ -141,5 +143,22 @@ namespace MementoContainer.Analysis
                 throw PropertyException.MissingAccessors(property);
             return property;
         }
+
+        /// <summary>
+        /// Validates a chain of properties.
+        /// All properties must be readable, and the last property must be writable.
+        /// </summary>
+        /// <param name="props"></param>
+        private void Validate(IList<PropertyInfo> props)
+        {
+            var cantBeRead = props.FirstOrDefault(p => !p.CanRead);
+            if (cantBeRead != null)
+                throw PropertyException.MissingGetAccessor(cantBeRead);
+
+            var last = props.Last();
+
+            if(! last.CanWrite)
+                throw PropertyException.MissingSetAccessor(last);
+        } 
     }
 }
