@@ -59,7 +59,7 @@ namespace MementoContainer.Factories
 
             if (props.Count == 1)
                 return new PropertyMemento(owner, false, props.First(), this);
-            return new DeepPropertyMemento(owner, props);
+            return new PropertyChainMemento(owner, props);
         }
 
         public IMementoComponent CreateMemento<TProp>(Expression<Func<TProp>> propertyExpression)
@@ -68,7 +68,7 @@ namespace MementoContainer.Factories
 
             if (props.Count == 1)
                 return new PropertyMemento(null, false, props.First(), this);
-            return new DeepPropertyMemento(null, props);
+            return new PropertyChainMemento(null, props);
         }
     }
 }

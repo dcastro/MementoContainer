@@ -21,7 +21,8 @@ namespace MementoContainer.Analysis
         /// </exception>
         /// 
         /// <exception cref="PropertyException">
-        /// All properties must declare get and set accessors.
+        /// All properties must declare a get accessor.
+        /// The last property in the expression must also have a set accessor.
         /// </exception>
         /// 
         /// <typeparam name="TOwner">The type of the function parameter.</typeparam>
@@ -42,7 +43,8 @@ namespace MementoContainer.Analysis
         /// </exception>
         /// 
         /// <exception cref="PropertyException">
-        /// All properties must declare get and set accessors.
+        /// All properties must declare a get accessor.
+        /// The last property in the expression must also have a set accessor.
         /// </exception>
         /// 
         /// <typeparam name="TProperty">The type of the last property in the expression.</typeparam>

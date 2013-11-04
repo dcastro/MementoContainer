@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace MementoContainer.Integration.RegisterObjectFeature.DisableCascading
+namespace MementoContainer.Integration.RegisterObjectFeature.Cascading
 {
     [TestFixture]
     public class CascadingDefinedTwice

@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace MementoContainer.Integration.RegisterPropertiesFeature
 {
     [TestFixture]
-    public class DeepHierarchy
+    public class PropertyChain
     {
         [Test]
         public void Test()

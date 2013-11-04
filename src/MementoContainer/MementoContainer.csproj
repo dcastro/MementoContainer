@@ -55,7 +55,7 @@
     <Compile Include="Attributes\MementoPropertyAttribute.cs" />
     <Compile Include="Attributes\MementoClassAttribute.cs" />
     <Compile Include="CollectionMemento.cs" />
-    <Compile Include="DeepPropertyMemento.cs" />
+    <Compile Include="PropertyChainMemento.cs" />
     <Compile Include="Domain\CollectionData.cs" />
     <Compile Include="Domain\IPropertyData.cs" />
     <Compile Include="Domain\PropertyData.cs" />
