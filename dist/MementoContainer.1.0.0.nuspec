@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MementoContainer</id>
-        <version>1.0.4</version>
+        <version>1.1.0</version>
         <title>MementoContainer</title>
         <authors>DCastro</authors>
         <owners>DCastro</owners>
@@ -10,15 +10,17 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>MementoContainer is an alternative approach to the Memento design pattern.
 
-It is a lightweight utility that keeps a record of your objects' properties so that you can easily rollback to a previous state when recovering from errors.</description>
-        <releaseNotes>Improved: Attributes on implemented interfaces are now "inherited"
-Improved: Attributes on extended classes are now inherited
-Added: support for explicit conversions within expressions
-Added: support for the "as" operator within expressions
-Added: documentation</releaseNotes>
+It is a lightweight utility that takes a snapshot of your objects' state so that you can easily rollback to a previous state when recovering from errors.</description>
+        <releaseNotes>Added: Support for taking snapshots of collections (see project wiki)
+Added: 'Cascade' flag to attributes constructors (see project wiki)
+Added: MementoCollectionAttribute
+Added: Collection adapters
+Improved: Moved exceptions and attributes to the 'MementoContainer' namespace
+Removed: MementoClassAttribute cannot be used on interfaces anymore
+Fixed: Property chain validation</releaseNotes>
         <copyright />
         <language />
-        <tags>memento container undo rollback recover restore state</tags>
+        <tags>memento container undo rollback recover restore state snapshot</tags>
     </metadata>
     <files>
         <file src="..\bin\MementoContainer.dll" target="lib\portable-net45+win8\MementoContainer.dll" />
