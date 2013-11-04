@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using MementoContainer.Adapters;
+using MementoContainer.Domain;
 using MementoContainer.Factories;
 using MementoContainer.Utils;
 
@@ -18,9 +18,9 @@ namespace MementoContainer
     /// E.g., if this PropertyMemento records the state of <code>article.Photo</code> (where article is the owner and Photo is the property),
     /// PropertyMemento might also record Photo's properties (like Size, Description, Filename).
     /// </summary>
-    internal class PropertyMemento : ICompositePropertyMemento
+    internal class PropertyMemento : ICompositeMemento, IPropertyMemento
     {
-        public IEnumerable<ICompositePropertyMemento> Children { get; set; }
+        public IEnumerable<ICompositeMemento> Children { get; set; }
         
         public object Owner { get; set; }
         public IPropertyAdapter Property { get; set; }
@@ -28,42 +28,43 @@ namespace MementoContainer
 
         //dependencies
         private IMementoFactory Factory { get; set; }
-        private IPropertyAnalyzer Analyzer { get; set; }
 
-        internal PropertyMemento(object owner, bool generateChildren, IPropertyAdapter prop, IMementoFactory factory, IPropertyAnalyzer analyzer)
+        internal PropertyMemento(IPropertyData data, IMementoFactory factory) : this(data.Owner, data.Cascade, data.PropertyAdapter, factory)
+        {            
+        }
+
+        internal PropertyMemento(object owner, bool cascade, IPropertyAdapter prop, IMementoFactory factory)
         {
             Property = prop;
-            Owner = Property.IsStatic() ? null : owner;
+            Owner = Property.IsStatic ? null : owner;
 
             SavedValue = Property.GetValue(owner);
 
             Factory = factory;
-            Analyzer = analyzer;
-            Children = new List<ICompositePropertyMemento>();
+            Children = new List<ICompositeMemento>();
 
-            if(generateChildren)
+            if(cascade)
                 GenerateChildren();
         }
 
-        public void Restore()
+        public void Rollback()
         {
             Property.SetValue(Owner, SavedValue);
             foreach (var child in Children)
             {
-                child.Restore();
+                child.Rollback();
             }
         }
 
         /// <summary>
-        /// Generates instances of ICompositePropertyMemento for each property that belongs to this property's value.
+        /// Generates instances of ICompositeMemento for each property that belongs to this property's value.
         /// </summary>
         protected void GenerateChildren()
         {
             //if this property has a value, generate mementos for the value's properties
             if (SavedValue != null)
             {
-                var props = Analyzer.GetProperties(SavedValue);
-                Children = props.Select(p => Factory.CreateMemento(SavedValue, p)).ToList();
+                Children = Factory.CreateMementos(SavedValue);
             }
         }
     }

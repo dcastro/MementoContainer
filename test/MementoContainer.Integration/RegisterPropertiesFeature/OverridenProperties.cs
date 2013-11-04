@@ -23,7 +23,7 @@ namespace MementoContainer.Integration.RegisterPropertiesFeature
             concreteArticle.Title = "Something else";
             abstractArticle.Title = "Something else";
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreEqual("Draft", concreteArticle.Title);
             Assert.AreEqual("Draft", abstractArticle.Title);

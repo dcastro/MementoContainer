@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using MementoContainer.Adapters;
+using MementoContainer.Domain;
 
-namespace MementoContainer.Utils
+namespace MementoContainer.Analysis
 {
     /// <summary>
     /// Analyzes certain inputs (e.g., expressions and objects) and looks for properties to be registered in the memento.
@@ -25,7 +21,8 @@ namespace MementoContainer.Utils
         /// </exception>
         /// 
         /// <exception cref="PropertyException">
-        /// All properties must declare get and set accessors.
+        /// All properties must declare a get accessor.
+        /// The last property in the expression must also have a set accessor.
         /// </exception>
         /// 
         /// <typeparam name="TOwner">The type of the function parameter.</typeparam>
@@ -46,7 +43,8 @@ namespace MementoContainer.Utils
         /// </exception>
         /// 
         /// <exception cref="PropertyException">
-        /// All properties must declare get and set accessors.
+        /// All properties must declare a get accessor.
+        /// The last property in the expression must also have a set accessor.
         /// </exception>
         /// 
         /// <typeparam name="TProperty">The type of the last property in the expression.</typeparam>
@@ -60,12 +58,12 @@ namespace MementoContainer.Utils
         /// Otherwise, only properties with the MementoProperty attribute will be returned.
         /// </summary>
         /// 
-        /// <exception cref="InvalidExpressionException">
-        /// All properties that have the Memento attribute defined must declare get and set accessors.
+        /// <exception cref="PropertyException">
+        /// All properties that have the <see cref="MementoPropertyAttribute"/> defined must declare get and set accessors.
         /// </exception>
         /// 
         /// <param name="obj">The object whose properties will be retrieved.</param>
         /// <returns>The object's properties.</returns>
-        IList<IPropertyAdapter> GetProperties(object obj);
+        IList<IPropertyData> GetProperties(object obj);
     }
 }

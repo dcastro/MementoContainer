@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MementoContainer.Attributes;
 using NUnit.Framework;
 
 namespace MementoContainer.Integration.RegisterPropertiesFeature
 {
     [TestFixture]
-    public class DeepHierarchy
+    public class PropertyChain
     {
         [Test]
         public void Test()
@@ -22,7 +21,7 @@ namespace MementoContainer.Integration.RegisterPropertiesFeature
 
             article.Author = new Author { Name = "No one" };
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreEqual("DCastro", article.Author.Name);
         }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MementoContainer.Attributes;
 using NUnit.Framework;
 
 namespace MementoContainer.Integration.RegisterObjectFeature
@@ -22,7 +21,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature
             article.Title = "Something else";
             (article as Article).Id = 2;
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreEqual("Draft", article.Title);
             Assert.AreEqual(1, (article as Article).Id);

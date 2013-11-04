@@ -4,17 +4,17 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using MementoContainer.Adapters;
+using MementoContainer.Domain;
 using MementoContainer.Utils;
 
 namespace MementoContainer
 {
     /// <summary>
-    /// Represents a property hierarchy (a.k.a. recursive property).
+    /// Represents a chain of properties.
     /// E.g., magazine => magazine.FrontPage.Photo.Description
-    /// In this example, 'magazine' is the owner, 'FrontPage' and 'Photo' are the links and 'Description' is the property being recorded.
+    /// In this example, 'magazine' is the owner, 'FrontPage' and 'Photo' are the links and 'Description' is the target - the property being recorded.
     /// </summary>
-    internal class DeepPropertyMemento : IPropertyMemento
+    internal class PropertyChainMemento : IPropertyMemento
     {
         public object Owner { get; set; }
         public IPropertyAdapter Property { get; set; }
@@ -22,12 +22,12 @@ namespace MementoContainer
 
         protected IList<IPropertyAdapter> Links { get; set; }
 
-        public DeepPropertyMemento(object owner, IList<IPropertyAdapter> props)
+        public PropertyChainMemento(object owner, IList<IPropertyAdapter> props)
         {
             Property = props.Last();
             Links = props.Take(props.Count - 1).ToList();
 
-            Owner = Property.IsStatic() ? null : owner;
+            Owner = Property.IsStatic ? null : owner;
 
             SavedValue = GetValue();
         }
@@ -52,7 +52,7 @@ namespace MementoContainer
             return Links.Aggregate(Owner, (currentOwner, prop) => prop.GetValue(currentOwner));
         }
 
-        public void Restore()
+        public void Rollback()
         {
             object lastOwner = ResolveLinks();
             Property.SetValue(lastOwner, SavedValue);

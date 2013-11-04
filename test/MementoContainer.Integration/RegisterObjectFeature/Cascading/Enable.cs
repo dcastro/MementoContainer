@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MementoContainer.Attributes;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
-namespace MementoContainer.Integration.RegisterObjectFeature
+namespace MementoContainer.Integration.RegisterObjectFeature.Cascading
 {
     [TestFixture]
-    public class DeepHierarchy
+    public class Enable
     {
         [Test]
         public void Test()
@@ -23,7 +17,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature
             author.Name = "No one";
             article.Author = new Author {Name = "No one"};
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreSame(author, article.Author);
             Assert.AreEqual("DCastro", article.Author.Name);

@@ -20,7 +20,7 @@ namespace MementoContainer.Integration.RegisterStaticPropertiesFeature
 
             Article.Count++;
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreEqual(1, Article.Count);
         }

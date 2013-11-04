@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace MementoContainer.Integration.RegisterStaticPropertiesFeature
 {
     [TestFixture]
-    public class DeepHierarchy
+    public class PropertyChain
     {
         [Test]
         public void Test()
@@ -20,7 +20,7 @@ namespace MementoContainer.Integration.RegisterStaticPropertiesFeature
 
             Article.Count.Views++;
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreEqual(1, Article.Count.Views);
         }

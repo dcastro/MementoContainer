@@ -87,12 +87,16 @@ namespace MementoContainer.Unit
             //Arrange
             var obj = new object();
 
-            var propertyMementoMock = new Mock<IMementoComponent>();
+            var mementos = new List<ICompositeMemento>
+                               {
+                                   new Mock<ICompositeMemento>().Object,
+                                   new Mock<ICompositeMemento>().Object
+                               };
 
             var factoryMock = new Mock<IMementoFactory>();
             factoryMock
-                .Setup(f => f.CreateMemento(obj))
-                .Returns(propertyMementoMock.Object);
+                .Setup(f => f.CreateMementos(obj))
+                .Returns(mementos);
 
             Memento.Factory = factoryMock.Object;
 
@@ -100,8 +104,8 @@ namespace MementoContainer.Unit
             Memento.Register(obj);
 
             //Assert
-            CollectionAssert.Contains(Memento.Components, propertyMementoMock.Object);
-            factoryMock.Verify(f => f.CreateMemento(obj), Times.Once());
+            CollectionAssert.AreEquivalent(mementos, Memento.Components);
+            factoryMock.Verify(f => f.CreateMementos(obj), Times.Once());
         }
 
         [Test]
@@ -120,11 +124,11 @@ namespace MementoContainer.Unit
             Memento.Components = components;
 
             //Act
-            Memento.Restore();
+            Memento.Rollback();
 
             //Assert
-            componentMock1.Verify(c => c.Restore(), Times.Once());
-            componentMock2.Verify(c => c.Restore(), Times.Once());
+            componentMock1.Verify(c => c.Rollback(), Times.Once());
+            componentMock2.Verify(c => c.Rollback(), Times.Once());
         }
     }
 }

@@ -4,14 +4,14 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using MementoContainer.Adapters;
+using MementoContainer.Domain;
 using Moq;
 using NUnit.Framework;
 
 namespace MementoContainer.Unit
 {
     [TestFixture]
-    class DeepPropertyMementoFixture : TestBase
+    class PropertyChainMementoFixture : TestBase
     {
         [Test]
         public void TestGetValue()
@@ -37,7 +37,7 @@ namespace MementoContainer.Unit
                     property.Object
                 };
 
-            var memento = new DeepPropertyMemento(obj, props);
+            var memento = new PropertyChainMemento(obj, props);
 
             //Act
             object value = memento.GetValue();
@@ -69,11 +69,11 @@ namespace MementoContainer.Unit
                     property.Object
                 };
 
-            var memento = new DeepPropertyMemento(obj, props);
+            var memento = new PropertyChainMemento(obj, props);
             memento.SavedValue = FinalVal;
 
             //Act
-            memento.Restore();
+            memento.Rollback();
 
             //Assert
             property.Verify(p => p.SetValue(link2Val, FinalVal), Times.Once());

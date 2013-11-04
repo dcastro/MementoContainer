@@ -14,6 +14,6 @@ namespace MementoContainer
         /// <summary>
         /// Restores the component's state to a previously saved state.
         /// </summary>
-        void Restore();
+        void Rollback();
     }
 }

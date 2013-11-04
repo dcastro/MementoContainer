@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using MementoContainer.Analysis;
 using MementoContainer.Factories;
 using MementoContainer.Utils;
 
@@ -44,7 +45,8 @@ namespace MementoContainer
         internal void InjectDependencies()
         {
             Factory = new MementoFactory(
-                new PropertyAnalyzer()
+                new PropertyAnalyzer(),
+                new CollectionAnalyzer()
             );
         }
 
@@ -70,8 +72,8 @@ namespace MementoContainer
         /// <returns>This IMemento instance.</returns>
         public IMemento RegisterProperty<TOwner, TProp>(TOwner owner, Expression<Func<TOwner, TProp>> propertyExpression)
         {
-            Method.Requires<ArgumentNullException>(owner != null);
-            Method.Requires<ArgumentNullException>(propertyExpression != null);
+            owner.ThrowIfNull("owner");
+            propertyExpression.ThrowIfNull("propertyExpression");
 
             var memento = Factory.CreateMemento(owner, propertyExpression);
             Components.Add(memento);
@@ -97,7 +99,7 @@ namespace MementoContainer
         /// <returns>This IMemento instance.</returns>
         public IMemento RegisterProperty<TProp>(Expression<Func<TProp>> propertyExpression)
         {
-            Method.Requires<ArgumentNullException>(propertyExpression != null);
+            propertyExpression.ThrowIfNull("propertyExpression");
 
             var memento = Factory.CreateMemento(propertyExpression);
             Components.Add(memento);
@@ -105,22 +107,73 @@ namespace MementoContainer
         }
 
         /// <summary>
-        /// Registers properties of a given object.
-        /// If the object's type has the MementoClass attribute defined, all properties declaring get and set accessors are registered.
-        /// Otherwise, only properties with the MementoProperty attribute will be registered.
+        /// Registers properties/collections of a given object.
+        /// If the object's type has the MementoClass attribute defined, all properties declaring get and set accessors and collections are registered.
+        /// Otherwise, only properties/collections with the MementoProperty and/or MementoCollection attributes will be registered.
         /// </summary>
         /// 
         /// <exception cref="PropertyException">
-        /// All properties being registered must declare get and set accessors.
+        /// All properties that have the <see cref="MementoPropertyAttribute"/> defined must declare get and set accessors.
+        /// </exception>
+        /// 
+        /// <exception cref="CollectionException">
+        /// All properties that have the <see cref="MementoCollectionAttribute"/> defined must either implement <see cref="ICollection{T}"/> 
+        /// or provide an <see cref="ICollectionAdapter{TCollection,TItem}"/> through the attribute constructor.
+        /// The adapter must be an instantiable type and have a public parameterless constructor.
         /// </exception>
         /// 
         /// <param name="obj">The object whose properties are being registered.</param>
         /// <returns>This IMemento instance.</returns>
         public IMemento Register(object obj)
         {
-            Method.Requires<ArgumentNullException>(obj != null);
+            obj.ThrowIfNull("obj");
 
-            var memento = Factory.CreateMemento(obj);
+            var mementos = Factory.CreateMementos(obj);
+
+            foreach (var memento in mementos)
+            {
+                Components.Add(memento);
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Registers a collection.
+        /// After <see cref="IMemento.Rollback"/> is called, the collection will contain the same elements as at the time of registration.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">The type of the elements in the collection.</typeparam>
+        /// <param name="collection">The collection being registered.</param>
+        /// <returns>This IMemento instance.</returns>
+        public IMemento RegisterCollection<T>(ICollection<T> collection)
+        {
+            collection.ThrowIfNull("collection");
+
+            var memento = Factory.CreateCollectionMemento(collection, false);
+
+            Components.Add(memento);
+            return this;
+        }
+
+        /// <summary>
+        /// Registers a custom collection though an adapter.
+        /// The adapter's 'Collection' property must be set.
+        /// After <see cref="IMemento.Rollback"/> is called, the collection will contain the same elements as at the time of registration.
+        /// </summary>
+        /// 
+        /// <typeparam name="TCollection">The type of the collection being registered.</typeparam>
+        /// <typeparam name="TElement">The type of elements in the collection.</typeparam>
+        /// <param name="adapter">An adapter for a custom collection. Its 'Collection' property should be set.</param>
+        /// <returns>This IMemento instance.</returns>
+        public IMemento RegisterCollection<TCollection, TElement>(ICollectionAdapter<TCollection, TElement> adapter)
+        {
+            adapter.ThrowIfNull("adapter");
+            if(adapter.Collection == null)
+                throw new ArgumentException("The adapter's Collection property must not be null.", "adapter");
+
+            var memento = Factory.CreateCollectionMemento(adapter, false);
+
             Components.Add(memento);
             return this;
         }
@@ -128,11 +181,11 @@ namespace MementoContainer
         /// <summary>
         /// Restores every registered property to their initially recorded value.
         /// </summary>
-        public void Restore()
+        public void Rollback()
         {
             foreach (var memento in Components)
             {
-                memento.Restore();
+                memento.Rollback();
             }
         }
     }

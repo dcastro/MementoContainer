@@ -40,6 +40,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Moq, Version=4.0.10827.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
@@ -62,13 +63,15 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="DeepPropertyMementoFixture.cs" />
+    <Compile Include="Analysis\CollectionAnalyzerFixture.cs" />
+    <Compile Include="PropertyChainMementoFixture.cs" />
+    <Compile Include="Domain\CollectionDataFixture.cs" />
     <Compile Include="MementoFixture.cs" />
-    <Compile Include="ObjectMementoFixture.cs" />
-    <Compile Include="PropertyAnalyzerFixture.cs" />
+    <Compile Include="Analysis\PropertyAnalyzerFixture.cs" />
     <Compile Include="PropertyMementoFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestBase`.cs" />
+    <Compile Include="Utils\TypeExtensionsFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\MementoContainer\MementoContainer.csproj">

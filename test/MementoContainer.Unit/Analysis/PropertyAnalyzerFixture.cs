@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using MementoContainer.Adapters;
-using MementoContainer.Utils;
+﻿using System.Collections.Generic;
+using MementoContainer.Analysis;
 using NUnit.Framework;
 
-namespace MementoContainer.Unit
+namespace MementoContainer.Unit.Analysis
 {
     [TestFixture]
     class PropertyAnalyzerFixture
@@ -25,6 +18,8 @@ namespace MementoContainer.Unit
         #region Fixture
         private class Article
         {
+            public string GetSetProperty { get; set; }
+            public string GetOnlyProperty { get { return ""; } }
             public int Field = 0;
             public static int StaticField = 0;
 
@@ -38,13 +33,17 @@ namespace MementoContainer.Unit
                 return 0;
             }
         }
-        #endregion
 
         private class Magazine
         {
-            public IList<Article> Articles { get; set; } 
-        }
+            [MementoProperty]
+            public Article GetOnlyProperty { get { return _article; } }
+            private readonly Article _article = new Article();
 
+            public IList<Article> Articles { get; set; }
+        }
+        #endregion
+        
         /// <summary>
         /// Tests that an exception is thrown when an expression containing method calls is supplied.
         /// </summary>
@@ -56,13 +55,13 @@ namespace MementoContainer.Unit
                                                       Analyzer.GetProperties(
                                                           (Article a) => a.Print()
                                                           ));
-            Assert.True(ex.Message.Contains("method"));
+            StringAssert.Contains("method", ex.Message);
 
             ex = Assert.Throws<InvalidExpressionException>(() =>
                                           Analyzer.GetProperties(
                                               () => Article.StaticPrint()
                                               ));
-            Assert.True(ex.Message.Contains("method"));
+            StringAssert.Contains("method", ex.Message);
         }
 
         /// <summary>
@@ -77,14 +76,14 @@ namespace MementoContainer.Unit
                                                           (Article a) => magazine.Articles
                                                           ));
 
-            Assert.True(ex.Message.Contains("closure"));
+            StringAssert.Contains("closure", ex.Message);
 
             ex = Assert.Throws<InvalidExpressionException>(() =>
                                                       Analyzer.GetProperties(
                                                           () => magazine.Articles
                                                           ));
 
-            Assert.True(ex.Message.Contains("closure"));
+            StringAssert.Contains("closure", ex.Message);
         }
 
         /// <summary>
@@ -111,14 +110,46 @@ namespace MementoContainer.Unit
                                                           (Article a) => a.Field
                                                           ));
 
-            Assert.True(ex.Message.Contains("field"));
+            StringAssert.Contains("field", ex.Message);
 
             ex = Assert.Throws<InvalidExpressionException>(() =>
                                           Analyzer.GetProperties(
                                               () => Article.StaticField
                                               ));
 
-            Assert.True(ex.Message.Contains("field"));
+            StringAssert.Contains("field", ex.Message);
+        }
+
+        /// <summary>
+        /// Tests that an exception is thrown when a property missing a set accessor is registered.
+        /// </summary>
+        [Test]
+        public void TestGetOnlyProperty()
+        {
+            var ex = Assert.Throws<PropertyException>(() => Analyzer.GetProperties(new Magazine()));
+            StringAssert.Contains("set accessor", ex.Message);
+
+            ex = Assert.Throws<PropertyException>(() => Analyzer.GetProperties((Magazine m) => m.GetOnlyProperty));
+            StringAssert.Contains("set accessor", ex.Message);
+        }
+
+        /// <summary>
+        /// Tests that, in a property chain, the links don't need a set accessor
+        /// </summary>
+        [Test]
+        public void TestChainLinksDontNeedSetter()
+        {
+            Assert.DoesNotThrow(() => Analyzer.GetProperties((Magazine m) => m.GetOnlyProperty.GetSetProperty));
+        }
+
+        /// <summary>
+        /// Tests that, in a property chain, the target needs a set accessor
+        /// </summary>
+        [Test]
+        public void TestChainTargetNeedsSetter()
+        {
+            var ex = Assert.Throws<PropertyException>(() => Analyzer.GetProperties((Magazine m) => m.GetOnlyProperty.GetOnlyProperty));
+            StringAssert.Contains("set accessor", ex.Message);
         }
     }
 }

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MementoContainer
 {
@@ -55,13 +52,19 @@ namespace MementoContainer
         IMemento RegisterProperty<TProp>(Expression<Func<TProp>> propertyExpression);
 
         /// <summary>
-        /// Registers properties of a given object.
-        /// If the object's type has the MementoClass attribute defined, all properties declaring get and set accessors are registered.
-        /// Otherwise, only properties with the MementoProperty attribute will be registered.
+        /// Registers properties/collections of a given object.
+        /// If the object's type has the MementoClass attribute defined, all properties declaring get and set accessors and collections are registered.
+        /// Otherwise, only properties/collections with the MementoProperty and/or MementoCollection attributes will be registered.
         /// </summary>
         /// 
         /// <exception cref="PropertyException">
-        /// All properties being registered must declare get and set accessors.
+        /// All properties that have the <see cref="MementoPropertyAttribute"/> defined must declare get and set accessors.
+        /// </exception>
+        /// 
+        /// <exception cref="CollectionException">
+        /// All properties that have the <see cref="MementoCollectionAttribute"/> defined must either implement <see cref="ICollection{T}"/> 
+        /// or provide an <see cref="ICollectionAdapter{TCollection,TItem}"/> through the attribute constructor.
+        /// The adapter must be an instantiable type and have a public parameterless constructor.
         /// </exception>
         /// 
         /// <param name="obj">The object whose properties are being registered.</param>
@@ -69,8 +72,30 @@ namespace MementoContainer
         IMemento Register(object obj);
 
         /// <summary>
+        /// Registers a collection.
+        /// After <see cref="Rollback"/> is called, the collection will contain the same elements as at the time of registration.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">The type of the elements in the collection.</typeparam>
+        /// <param name="collection">The collection being registered.</param>
+        /// <returns>This IMemento instance.</returns>
+        IMemento RegisterCollection<T>(ICollection<T> collection);
+
+        /// <summary>
+        /// Registers a custom collection though an adapter.
+        /// The adapter's 'Collection' property must be set.
+        /// After <see cref="Rollback"/> is called, the collection will contain the same elements as at the time of registration.
+        /// </summary>
+        /// 
+        /// <typeparam name="TCollection">The type of the collection being registered.</typeparam>
+        /// <typeparam name="TElement">The type of elements in the collection.</typeparam>
+        /// <param name="adapter">An adapter for a custom collection. Its 'Collection' property should be set.</param>
+        /// <returns>This IMemento instance.</returns>
+        IMemento RegisterCollection<TCollection, TElement>(ICollectionAdapter<TCollection, TElement> adapter);
+
+        /// <summary>
         /// Restores every registered property to their initially recorded value.
         /// </summary>
-        void Restore();
+        void Rollback();
     }
 }

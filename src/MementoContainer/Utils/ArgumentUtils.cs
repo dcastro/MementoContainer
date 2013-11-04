@@ -21,5 +21,11 @@ namespace MementoContainer.Utils
             if (!condition)
                 throw new T();
         }
+
+        public static void ThrowIfNull<T>(this T obj, string paramName)
+        {
+            if (obj == null)
+                throw new ArgumentNullException(paramName);
+        }
     }
 }

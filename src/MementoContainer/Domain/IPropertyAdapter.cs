@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MementoContainer.Adapters
+﻿namespace MementoContainer.Domain
 {
     /// <summary>
     /// Represents an instance or static property
@@ -12,10 +6,9 @@ namespace MementoContainer.Adapters
     internal interface IPropertyAdapter
     {
         /// <summary>
-        /// Determines whether this property is static.
+        /// Returns true if this property is static.
         /// </summary>
-        /// <returns>A boolean stating whether this property is static.</returns>
-        bool IsStatic();
+        bool IsStatic { get; }
 
         /// <summary>
         /// Returns the property value of a specified object.

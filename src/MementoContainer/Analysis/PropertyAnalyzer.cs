@@ -1,14 +1,12 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using MementoContainer.Adapters;
-using MementoContainer.Attributes;
+using MementoContainer.Domain;
+using MementoContainer.Utils;
 
-namespace MementoContainer.Utils
+namespace MementoContainer.Analysis
 {
     internal class PropertyAnalyzer : IPropertyAnalyzer
     {
@@ -32,7 +30,7 @@ namespace MementoContainer.Utils
                 bool isDoneAnalyzing;
                 ValidateExpression(ref expression, hasParameter, out isDoneAnalyzing);
 
-                if(isDoneAnalyzing)
+                if (isDoneAnalyzing)
                     break;
 
                 var memberExp = expression as MemberExpression;
@@ -48,7 +46,9 @@ namespace MementoContainer.Utils
             if (hasParameter && expression == null)
                 throw InvalidExpressionException.UnexpectedOperation;
 
-            return ValidateProperties(props);
+            Validate(props);
+
+            return props.Select(Wrap).ToList();
         }
 
         /// <summary>
@@ -98,99 +98,67 @@ namespace MementoContainer.Utils
             }
         }
 
-        public IList<IPropertyAdapter> GetProperties(object obj)
+        public IList<IPropertyData> GetProperties(object obj)
         {
             Type type = obj.GetType();
-            TypeInfo typeInfo = type.GetTypeInfo();
-            var props = type.GetRuntimeProperties();
-            
+            IDictionary<PropertyInfo, IList<Attribute>> attributesMap = type.GetFullAttributesMap();
 
             //check if type has MementoClassAttribute
-            if (IsMementoClass(typeInfo))
+            if (type.IsMementoClass())
             {
-                return WrapProperties(
-                    LookupProperties(typeInfo, true));
+                var typeInfo = type.GetTypeInfo();
+                var mementoClassAttr = typeInfo.GetCustomAttribute<MementoClassAttribute>();
+
+                return attributesMap
+                    .Where(kv => kv.Value.Any(attr => attr is MementoPropertyAttribute) || kv.Key.HasGetAndSet())
+                    .Select(kv => kv.Key)
+                    .Select(Validate)
+                    .Select(prop => new PropertyData(prop, obj, attributesMap[prop], mementoClassAttr))
+                    .Cast<IPropertyData>()
+                    .ToList();
             }
 
-            //lookup properties in the type's interfaces
-            var interfaces = typeInfo.ImplementedInterfaces;
-            var interfaceAnnotatedProps = interfaces.SelectMany(LookupProperties);
-
-            //filter annotated properties
-            var annotatedProps = props.Where(p =>
-                                p.IsDefined(typeof (MementoPropertyAttribute)) ||
-                                interfaceAnnotatedProps.Any(interfaceProp => interfaceProp.Name == p.Name))
-                         .ToList();
-            return ValidateProperties(annotatedProps);
-        }
-
-        private bool IsMementoClass(TypeInfo typeInfo)
-        {
-            return typeInfo.IsDefined(typeof (MementoClassAttribute));
-        }
-
-        private IList<PropertyInfo> LookupProperties(Type type)
-        {
-            TypeInfo typeinfo = type.GetTypeInfo();
-            if (IsMementoClass(typeinfo))
-                return LookupProperties(typeinfo, true);
-            return LookupProperties(typeinfo, false);
-        }
-
-        /// <summary>
-        /// Returns the type's annotated properties.
-        /// If the type has the MementoClass attribute defined, then all properties with get and set accessors are returned.
-        /// Otherwise, all properties with the MementoProperty attribute are returned.
-        /// </summary>
-        /// <param name="typeInfo"></param>
-        /// <param name="isMementoClass"></param>
-        /// <returns></returns>
-        private IList<PropertyInfo> LookupProperties(TypeInfo typeInfo, bool isMementoClass)
-        {
-            IList<PropertyInfo> props;
-
-            if (isMementoClass)
-            {
-                props = typeInfo.DeclaredProperties.Where(p => p.HasGetAndSet()).ToList();
-            }
-            else
-            {
-                props = typeInfo.DeclaredProperties.Where(p => p.IsDefined(typeof(MementoPropertyAttribute))).ToList();
-            }
-
-            return props;
-        }
-
-        /// <summary>
-        /// Validates and wraps all properties in an adapter.
-        /// </summary>
-        /// <param name="properties">A group of properties being validated and wrapped.</param>
-        /// <returns>A group of properties wrapped in the IPropertyAdapter interface.</returns>
-        private IList<IPropertyAdapter> ValidateProperties(IEnumerable<PropertyInfo> properties)
-        {
-            var adapters = new List<IPropertyAdapter>();
-
-            foreach (var prop in properties)
-            {
-                if (!prop.HasGetAndSet())
-                    throw new PropertyException(prop);
-                adapters.Add(new PropertyInfoAdapter(prop));
-            }
-
-            return adapters;
-        }
-
-        /// <summary>
-        /// Wraps all properties in an adapter.
-        /// </summary>
-        /// <param name="properties">A group of properties being wrapped.</param>
-        /// <returns>A group of properties wrapped in the IPropertyAdapter interface.</returns>
-        private IList<IPropertyAdapter> WrapProperties(IEnumerable<PropertyInfo> properties)
-        {
-            return properties
-                .Select(prop => new PropertyInfoAdapter(prop))
-                .Cast<IPropertyAdapter>()
+            return attributesMap
+                .Where(kv => kv.Value.Any(attr => attr is MementoPropertyAttribute))
+                .Select(kv => kv.Key)
+                .Select(Validate)
+                .Select(prop => new PropertyData(prop, obj, attributesMap[prop]))
+                .Cast<IPropertyData>()
                 .ToList();
         }
+
+        /// <summary>
+        /// Wraps a property in an adapter
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        private IPropertyAdapter Wrap(PropertyInfo property)
+        {
+            return new PropertyInfoAdapter(property);
+        }
+
+        private PropertyInfo Validate(PropertyInfo property)
+        {
+            if (!property.HasGetAndSet())
+                throw PropertyException.MissingAccessors(property);
+            return property;
+        }
+
+        /// <summary>
+        /// Validates a chain of properties.
+        /// All properties must be readable, and the last property must be writable.
+        /// </summary>
+        /// <param name="props"></param>
+        private void Validate(IList<PropertyInfo> props)
+        {
+            var cantBeRead = props.FirstOrDefault(p => !p.CanRead);
+            if (cantBeRead != null)
+                throw PropertyException.MissingGetAccessor(cantBeRead);
+
+            var last = props.Last();
+
+            if(! last.CanWrite)
+                throw PropertyException.MissingSetAccessor(last);
+        } 
     }
 }

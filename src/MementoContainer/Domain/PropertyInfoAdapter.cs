@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 
-namespace MementoContainer.Adapters
+namespace MementoContainer.Domain
 {
     /// <summary>
     /// Wraps System.Reflection.PropertyInfo to make the system more testable.
@@ -19,10 +14,13 @@ namespace MementoContainer.Adapters
             _property = property;
         }
 
-        public bool IsStatic()
+        public bool IsStatic
         {
-            return (_property.CanRead && _property.GetMethod.IsStatic) ||
-                   (_property.CanWrite && _property.SetMethod.IsStatic);
+            get
+            {
+                return (_property.CanRead && _property.GetMethod.IsStatic) ||
+                       (_property.CanWrite && _property.SetMethod.IsStatic);
+            }
         }
 
         public object GetValue(object owner)

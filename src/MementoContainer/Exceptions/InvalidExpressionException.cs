@@ -9,7 +9,7 @@ namespace MementoContainer
     /// <summary>
     /// Thrown when an exception containing fields, variables, closures, method calls or any unexpected operation is supplied.
     /// </summary>
-    public class InvalidExpressionException : Exception
+    public class InvalidExpressionException : MementoException
     {
 
         private InvalidExpressionException(string msg)

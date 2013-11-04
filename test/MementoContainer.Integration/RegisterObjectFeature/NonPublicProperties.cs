@@ -1,5 +1,4 @@
-﻿using MementoContainer.Attributes;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace MementoContainer.Integration.RegisterObjectFeature
 {
@@ -16,7 +15,7 @@ namespace MementoContainer.Integration.RegisterObjectFeature
 
             article.ChangeState("Something else", 2, "No one");
 
-            memento.Restore();
+            memento.Rollback();
 
             Assert.AreEqual("Draft", article.GetTitle());
             Assert.AreEqual(1, article.GetId());
