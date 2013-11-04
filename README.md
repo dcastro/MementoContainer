@@ -2,7 +2,14 @@
 
 MementoContainer is an alternative approach to the [Memento design pattern](http://paginas.fe.up.pt/~aaguiar/as/gof/hires/pat5ffso.htm).
 
-It is a lightweight utility that keeps a record of your objects' properties so that you can easily rollback to a previous state when recovering from errors.
+It is a lightweight utility that takes a snapshot of your objects' state so that you can easily rollback to a previous state when recovering from errors.
+
+This approach, like the original one, promotes highly decoupled systems and preserves encapsulation boundaries while leveraging C#'s awesomeness
+(e.g., reflection, attributes, lambda expression analysis, dynamic typing) to avoid polluting your code base with Memento types.
+
+Besides, taking a snapshot of an object's state isn't always a trivial task.
+If you have a big dependency graph, then you will probably have to perform tedious deep cloning of your objects.
+MementoContainer does all that for you - and more.
 
 ```csharp
 var memento = Memento.Create()
@@ -75,7 +82,7 @@ try
 {
    magazine1.Name = "State of emergency declared";
    magazine1.Articles.Clear();
-   db.Save(article);
+   db.Save(magazine1);
 }
 catch(DBException)
 {
