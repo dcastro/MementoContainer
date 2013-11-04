@@ -23,45 +23,48 @@ catch(FormattingException)
 
 ### Registering objects
 
-The first step is to annotate your model's properties with the `MementoProperty` attribute, so that the memento will know which properties it will need to watch.
+The first step is to annotate your model's properties with the `MementoProperty` and/or `MementoCollection` attributes, so that the memento will know which properties it will need to watch.
 
 ```csharp
-public class Article
+public class Magazine
 {
    [MementoProperty]
    public string Title { get; set; }
 
-   [MementoProperty]
-   public DateTime? ReleaseDate { get; set; }
-
-   [MementoProperty]
-   public Person Author { get; set; }
+   [MementoCollection]
+   public IList<Article> Articles { get; set; }
 }
 ```
 
 In order to preserve encapsulation, these properties can have any access modifiers (private, public, protected) and even be static.
-And if the class `Person` also happens to have annotated properties, those will be registered as well!
+And if the class `Article` also happens to have annotated properties, those will be registered as well!
 
-Alternatively, you may also use the `MementoClass` attribute on your classes or interfaces.
-This way, all your object's properties will be recorded, provided they implement both get and set accessors.
+Alternatively, you may also use the `MementoClass` attribute on your classes.
+This way, all your object's properties/collections will be recorded.
 ```csharp
 [MementoClass]
-public class Magazine
+public class Article
 {
    public string Title { get; set; }
-   public Photo FrontPagePhoto { get; set; }
-   //more properties...
+   public string Author { get; set; }
 }
 ```
 
 The Memento object exposes a [fluent interface](http://www.martinfowler.com/bliki/FluentInterface.html) so that you can easily register all your objects with the container.
 
 ```csharp
-var article = new Article("Draft", null, author);
+var magazine1 = new Magazine
+    {
+        Title = "Draft",
+        Articles = new List<Article>
+            {
+                new Article("Draft", "DCastro")
+            }
+    };
 
 var memento = Memento.Create()
-                        .Register(article)
-                        .Register(magazine)
+                        .Register(magazine1)
+                        .Register(magazine2)
                         .Register(publisher);
 ```
 
@@ -70,25 +73,28 @@ Now you can freely act upon your objects and if anything goes wrong, just rollba
 ```csharp
 try
 {
-   article.Name = "State of emergency declared";
-   article.ReleaseDate = DateTime.UtcNow;
+   magazine1.Name = "State of emergency declared";
+   magazine1.Articles.Clear();
    db.Save(article);
 }
 catch(DBException)
 {
-   memento.Rollback();   //Name is now "Draft" and ReleaseDate is null
+   //The magazine will be renamed back to "Draft"
+   //and the article authored by "DCastro" will be re-inserted.
+   memento.Rollback();
 }
 ```
 
-### Registering single properties
+### Registering single properties/collections
 
-You can also register single properties, without the need to add attributes to your classes.
+You can also register single properties/collections, without the need to add attributes to your classes.
 
 ```csharp
 var memento = Memento.Create()
                         .RegisterProperty(publisher, p => p.Name) //simple property
-                        .RegisterProperty(publisher, p => p.ProfilePhoto.Description) //'deep' property
+                        .RegisterProperty(publisher, p => p.ProfilePhoto.Description) //chain of properties
                         .RegisterProperty(() => ArticleFactory.LastReleaseDate) //static property
+                        .RegisterCollection(articlesList);
 ```
 
 
@@ -102,3 +108,8 @@ PM> Install-Package MementoContainer
 
 ## Depency Injection and Mocking
 The IMemento interface is available so that you can easily mock it with tools like [Moq](https://code.google.com/p/moq/) in your unit tests and inject it as a depency using your favourite IoC container (e.g., [Castle Windsor](http://docs.castleproject.org/Windsor.MainPage.ashx) or [Ninject](http://www.ninject.org/)).
+
+## Documentation
+For more information and advanced usage, head on the [wiki].
+
+[wiki]: https://github.com/dcastro/MementoContainer/wiki
