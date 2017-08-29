@@ -8,7 +8,7 @@ namespace MementoContainer.Analysis
     /// <summary>
     /// Analyzes certain inputs (e.g., expressions and objects) and looks for properties to be registered in the memento.
     /// </summary>
-    internal interface IPropertyAnalyzer
+    public interface IPropertyAnalyzer
     {
         /// <summary>
         /// Parses all properties contained within an expression that maps an instance of an object to one of its properties.

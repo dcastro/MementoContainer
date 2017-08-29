@@ -9,7 +9,7 @@ namespace MementoContainer.Domain
     /// <summary>
     /// Represents data related to a collection to be registered in the memento container.
     /// </summary>
-    internal interface ICollectionData
+    public interface ICollectionData
     {
         /// <summary>
         /// Represents a collection.

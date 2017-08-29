@@ -13,7 +13,7 @@ namespace MementoContainer
     /// E.g., if this ICompositeMemento records the state of <code>article.Photo</code> (where article is the owner and Photo is the property),
     /// ICompositeMemento might also record Photo's properties (like Size, Description, Filename).
     /// </summary>
-    internal interface ICompositeMemento : IMementoComponent
+    public interface ICompositeMemento : IMementoComponent
     {
         /// <summary>
         /// Collection of properties related to this property's value.
