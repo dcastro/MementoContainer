@@ -27,7 +27,7 @@ namespace MementoContainer
         public Memento()
         {
             Components = new List<IMementoComponent>();
-            InjectDependencies();
+            CreateMementoFactory();
         }
 
         /// <summary>
@@ -40,13 +40,13 @@ namespace MementoContainer
         }
 
         /// <summary>
-        /// Injects the system's dependencies.
+        /// Creates memento factory via DependencyContainer
         /// </summary>
-        internal void InjectDependencies()
+        protected virtual void CreateMementoFactory()
         {
-            Factory = new MementoFactory(
-                new PropertyAnalyzer(),
-                new CollectionAnalyzer()
+            Factory = DependencyContainer.GetInstanceFor<IMementoFactory>() ?? new MementoFactory(
+                DependencyContainer.GetInstanceFor<IPropertyAnalyzer>() ?? new PropertyAnalyzer(),
+                DependencyContainer.GetInstanceFor<ICollectionAnalyzer>() ?? new CollectionAnalyzer()
             );
         }
 
