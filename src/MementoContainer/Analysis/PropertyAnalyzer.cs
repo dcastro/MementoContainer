@@ -13,13 +13,30 @@ namespace MementoContainer.Analysis
     /// </summary>
     public class PropertyAnalyzer : IPropertyAnalyzer
     {
-        delegate bool PropertyFilter(MementoClassAttribute mementoClassAttr, PropertyInfo pi, IList<Attribute> propertyAttrs);
-        private readonly PropertyFilter DefaultFilter = (mementoClassAttr, pi, propertyAttrs) =>
-        mementoClassAttr != null
-            ? propertyAttrs.Any(attr => attr is MementoPropertyAttribute) && pi.HasGetAndSet()
-            : propertyAttrs.Any(attr => attr is MementoPropertyAttribute);
+        public delegate bool PropertyFilter(MementoClassAttribute mementoClassAttr, PropertyInfo pi, IList<Attribute> propertyAttrs);
+        private static readonly PropertyFilter DefaultFilter = (mementoClassAttr, pi, propertyAttrs) =>
+                mementoClassAttr != null ?
+                        propertyAttrs.Any(attr => attr is MementoPropertyAttribute) && pi.HasGetAndSet()
+                        : propertyAttrs.Any(attr => attr is MementoPropertyAttribute);
 
         PropertyFilter Filter { get; }
+
+        /// <summary>
+        /// Initializes PropertyAnalizer with given filter
+        /// </summary>
+        /// <param name="filter">Property selection filter</param>
+        public PropertyAnalyzer(PropertyFilter filter)
+        {
+            Filter = filter;
+        }
+
+        /// <summary>
+        /// Initializes PropertyAnalizer with default filter
+        /// </summary>
+        public PropertyAnalyzer() : this(DefaultFilter)
+        {
+
+        }
 
         /// <summary>
         /// Gets property adapters for the properties given an expression 
@@ -130,57 +147,19 @@ namespace MementoContainer.Analysis
         public virtual IList<IPropertyData> GetProperties(object obj)
         {
             Type type = obj.GetType();
+            MementoClassAttribute mementoClassAttr = type.GetTypeInfo().GetCustomAttribute<MementoClassAttribute>();
             IDictionary<PropertyInfo, IList<Attribute>> attributesMap = type.GetFullAttributesMap();
 
-            //check if type has MementoClassAttribute
-            if (type.IsMementoClass())
-            {
-                var typeInfo = type.GetTypeInfo();
-                var mementoClassAttr = typeInfo.GetCustomAttribute<MementoClassAttribute>();
-
-                return attributesMap
-                    .Where(PropertySelectorForMementoClass)
-                    .Select(kv => kv.Key)
-                    .Select(Validate)
-                    .Select(prop => new PropertyData(prop, obj, attributesMap[prop], mementoClassAttr))
-                    .Cast<IPropertyData>()
-                    .ToList();
-            }
-
             return attributesMap
-                .Where(PropertySelectorForNonMementoClass)
-                .Select(kv => kv.Key)
+                .Where(x => Filter(mementoClassAttr, x.Key, x.Value))
+                .Select(x => x.Key)
                 .Select(Validate)
-                .Select(prop => new PropertyData(prop, obj, attributesMap[prop]))
+                .Select(x => new PropertyData(x, obj, attributesMap[x], mementoClassAttr))
                 .Cast<IPropertyData>()
                 .ToList();
         }
 
-        /// <summary>
-        /// Tells if a given property has to be registered in the memento in case the class is decorated with MementoClassAttribute
-        /// </summary>
-        /// <param name="kv">Property info and its attributes</param>
-        /// <returns>True if the property must be registered in the memento</returns>
-        protected virtual bool PropertySelectorForMementoClass(KeyValuePair<PropertyInfo, IList<Attribute>> kv)
-        {
-            return kv.Value.Any(attr => attr is MementoPropertyAttribute) || kv.Key.PropertyType.IsCollection();
-        }
 
-        /// <summary>
-        /// Tells if a given property has to be registered in the memento in case the class is not decorated with MementoClassAttribute
-        /// </summary>
-        /// <param name="kv">Property info and its attributes</param>
-        /// <returns>True if the property must be registered in the memento</returns>
-        protected virtual bool PropertySelectorForNonMementoClass(KeyValuePair<PropertyInfo, IList<Attribute>> kv)
-        {
-            return kv.Value.Any(attr => attr is MementoPropertyAttribute);
-        }
-
-        /// <summary>
-        /// Wraps a property in an adapter
-        /// </summary>
-        /// <param name="property"></param>
-        /// <returns></returns>
         private IPropertyAdapter Wrap(PropertyInfo property)
         {
             return new PropertyInfoAdapter(property);
@@ -190,6 +169,7 @@ namespace MementoContainer.Analysis
         {
             if (!property.HasGetAndSet())
                 throw PropertyException.MissingAccessors(property);
+
             return property;
         }
 
@@ -201,12 +181,13 @@ namespace MementoContainer.Analysis
         private void Validate(IList<PropertyInfo> props)
         {
             var cantBeRead = props.FirstOrDefault(p => !p.CanRead);
+
             if (cantBeRead != null)
                 throw PropertyException.MissingGetAccessor(cantBeRead);
 
             var last = props.Last();
 
-            if(! last.CanWrite)
+            if(!last.CanWrite)
                 throw PropertyException.MissingSetAccessor(last);
         } 
     }
