@@ -48,7 +48,6 @@
     <Compile Include="Adapters\ProducerConsumerCollectionAdapter.cs" />
     <Compile Include="Adapters\QueueAdapter.cs" />
     <Compile Include="Adapters\StackAdapter.cs" />
-    <Compile Include="DependencyContainer.cs" />
     <Compile Include="Domain\IPropertyAdapter.cs" />
     <Compile Include="Domain\PropertyInfoAdapter.cs" />
     <Compile Include="Analysis\CollectionAnalyzer.cs" />
@@ -56,8 +55,6 @@
     <Compile Include="Attributes\MementoPropertyAttribute.cs" />
     <Compile Include="Attributes\MementoClassAttribute.cs" />
     <Compile Include="CollectionMemento.cs" />
-    <Compile Include="Memento`1.cs" />
-    <Compile Include="Memento`2.cs" />
     <Compile Include="New.cs" />
     <Compile Include="PropertyChainMemento.cs" />
     <Compile Include="Domain\CollectionData.cs" />

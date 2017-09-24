@@ -13,6 +13,14 @@ namespace MementoContainer.Analysis
     /// </summary>
     public class PropertyAnalyzer : IPropertyAnalyzer
     {
+        delegate bool PropertyFilter(MementoClassAttribute mementoClassAttr, PropertyInfo pi, IList<Attribute> propertyAttrs);
+        private readonly PropertyFilter DefaultFilter = (mementoClassAttr, pi, propertyAttrs) =>
+        mementoClassAttr != null
+            ? propertyAttrs.Any(attr => attr is MementoPropertyAttribute) && pi.HasGetAndSet()
+            : propertyAttrs.Any(attr => attr is MementoPropertyAttribute);
+
+        PropertyFilter Filter { get; }
+
         /// <summary>
         /// Gets property adapters for the properties given an expression 
         /// </summary>
@@ -155,7 +163,7 @@ namespace MementoContainer.Analysis
         /// <returns>True if the property must be registered in the memento</returns>
         protected virtual bool PropertySelectorForMementoClass(KeyValuePair<PropertyInfo, IList<Attribute>> kv)
         {
-            return kv.Value.Any(attr => attr is MementoCollectionAttribute) || kv.Key.PropertyType.IsCollection();
+            return kv.Value.Any(attr => attr is MementoPropertyAttribute) || kv.Key.PropertyType.IsCollection();
         }
 
         /// <summary>
@@ -165,7 +173,7 @@ namespace MementoContainer.Analysis
         /// <returns>True if the property must be registered in the memento</returns>
         protected virtual bool PropertySelectorForNonMementoClass(KeyValuePair<PropertyInfo, IList<Attribute>> kv)
         {
-            return kv.Value.Any(attr => attr is MementoCollectionAttribute);
+            return kv.Value.Any(attr => attr is MementoPropertyAttribute);
         }
 
         /// <summary>
@@ -173,7 +181,7 @@ namespace MementoContainer.Analysis
         /// </summary>
         /// <param name="property"></param>
         /// <returns></returns>
-        protected virtual IPropertyAdapter Wrap(PropertyInfo property)
+        private IPropertyAdapter Wrap(PropertyInfo property)
         {
             return new PropertyInfoAdapter(property);
         }
