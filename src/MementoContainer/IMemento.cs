@@ -78,8 +78,9 @@ namespace MementoContainer
         /// 
         /// <typeparam name="T">The type of the elements in the collection.</typeparam>
         /// <param name="collection">The collection being registered.</param>
+        /// <param name="cascade">Specifies whether items in this collection should be added to the container as well.</param>
         /// <returns>This IMemento instance.</returns>
-        IMemento RegisterCollection<T>(ICollection<T> collection);
+        IMemento RegisterCollection<T>(ICollection<T> collection, bool cascade);
 
         /// <summary>
         /// Registers a custom collection though an adapter.
@@ -90,8 +91,9 @@ namespace MementoContainer
         /// <typeparam name="TCollection">The type of the collection being registered.</typeparam>
         /// <typeparam name="TElement">The type of elements in the collection.</typeparam>
         /// <param name="adapter">An adapter for a custom collection. Its 'Collection' property should be set.</param>
+        /// <param name="cascade">Specifies whether items in this collection should be added to the container as well.</param>
         /// <returns>This IMemento instance.</returns>
-        IMemento RegisterCollection<TCollection, TElement>(ICollectionAdapter<TCollection, TElement> adapter);
+        IMemento RegisterCollection<TCollection, TElement>(ICollectionAdapter<TCollection, TElement> adapter, bool cascade);
 
         /// <summary>
         /// Restores every registered property to their initially recorded value.
