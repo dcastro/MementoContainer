@@ -174,7 +174,7 @@ namespace MementoContainer
             if(adapter.Collection == null)
                 throw new ArgumentException("The adapter's Collection property must not be null.", "adapter");
 
-            var memento = Factory.CreateCollectionMemento(adapter, false);
+            var memento = Factory.CreateCollectionMemento(adapter, cascade);
 
             Components.Add(memento);
             return this;
