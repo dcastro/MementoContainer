@@ -145,12 +145,13 @@ namespace MementoContainer
         /// 
         /// <typeparam name="T">The type of the elements in the collection.</typeparam>
         /// <param name="collection">The collection being registered.</param>
+        /// <param name="cascade">Specifies whether items in this collection should be added to the container as well.</param>
         /// <returns>This IMemento instance.</returns>
-        public IMemento RegisterCollection<T>(ICollection<T> collection)
+        public IMemento RegisterCollection<T>(ICollection<T> collection, bool cascade = false)
         {
             collection.ThrowIfNull("collection");
 
-            var memento = Factory.CreateCollectionMemento(collection, false);
+            var memento = Factory.CreateCollectionMemento(collection, cascade);
 
             Components.Add(memento);
             return this;
@@ -165,8 +166,9 @@ namespace MementoContainer
         /// <typeparam name="TCollection">The type of the collection being registered.</typeparam>
         /// <typeparam name="TElement">The type of elements in the collection.</typeparam>
         /// <param name="adapter">An adapter for a custom collection. Its 'Collection' property should be set.</param>
+        /// <param name="cascade">Specifies whether items in this collection should be added to the container as well.</param>
         /// <returns>This IMemento instance.</returns>
-        public IMemento RegisterCollection<TCollection, TElement>(ICollectionAdapter<TCollection, TElement> adapter)
+        public IMemento RegisterCollection<TCollection, TElement>(ICollectionAdapter<TCollection, TElement> adapter, bool cascade = false)
         {
             adapter.ThrowIfNull("adapter");
             if(adapter.Collection == null)
