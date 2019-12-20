@@ -9,7 +9,7 @@ namespace MementoContainer.Domain
     /// <summary>
     /// Represents data related to a property to be registered in the memento container.
     /// </summary>
-    internal interface IPropertyData
+    public interface IPropertyData
     {
         /// <summary>
         /// Represents the property.

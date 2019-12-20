@@ -18,35 +18,31 @@ namespace MementoContainer
     {
         internal IList<IMementoComponent> Components { get; set; }
 
-        //dependencies
-        internal IMementoFactory Factory { private get; set; }
+        /// <summary>
+        /// Memento Factory 
+        /// </summary>
+        public IMementoFactory Factory { get; }
 
         /// <summary>
         /// Initializes a new instance.
         /// </summary>
-        public Memento()
+        public Memento(IMementoFactory factory)
         {
             Components = new List<IMementoComponent>();
-            InjectDependencies();
+            Factory = factory;
         }
 
         /// <summary>
-        /// Creates a new instance of IMemento.
+        /// Creates a new instance of IMemento with default Factory
         /// </summary>
         /// <returns>A new instance of IMemento.</returns>
         public static IMemento Create()
         {
-            return new Memento();
-        }
-
-        /// <summary>
-        /// Injects the system's dependencies.
-        /// </summary>
-        internal void InjectDependencies()
-        {
-            Factory = new MementoFactory(
-                new PropertyAnalyzer(),
-                new CollectionAnalyzer()
+            return new Memento(
+                new MementoFactory(
+                    new PropertyAnalyzer(),
+                    new CollectionAnalyzer()
+                )
             );
         }
 

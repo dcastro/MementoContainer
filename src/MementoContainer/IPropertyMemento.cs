@@ -13,7 +13,7 @@ namespace MementoContainer
     /// Represents a component responsible for recording the state of a static/instance property
     /// and restoring that state on demand.
     /// </summary>
-    internal interface IPropertyMemento : IMementoComponent
+    public interface IPropertyMemento : IMementoComponent
     {
         /// <summary>
         /// Represents the object to which the property belongs.

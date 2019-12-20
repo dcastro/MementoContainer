@@ -11,7 +11,7 @@ namespace MementoContainer.Factories
     /// <summary>
     /// IMementoFactory is responsible for creating Memento components.
     /// </summary>
-    internal interface IMementoFactory
+    public interface IMementoFactory
     {
         /// <summary>
         /// Creates memento components for each of the given object "owner"'s properties.

@@ -8,7 +8,7 @@ namespace MementoContainer.Analysis
     /// <summary>
     /// Analyzes objects and looks for collections to be registered in the memento.
     /// </summary>
-    internal interface ICollectionAnalyzer
+    public interface ICollectionAnalyzer
     {
         /// <summary>
         /// Retrieve an object's collections.

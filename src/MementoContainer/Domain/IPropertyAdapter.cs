@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents an instance or static property
     /// </summary>
-    internal interface IPropertyAdapter
+    public interface IPropertyAdapter
     {
         /// <summary>
         /// Returns true if this property is static.

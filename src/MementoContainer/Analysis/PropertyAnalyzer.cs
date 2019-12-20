@@ -8,13 +8,54 @@ using MementoContainer.Utils;
 
 namespace MementoContainer.Analysis
 {
-    internal class PropertyAnalyzer : IPropertyAnalyzer
+    /// <summary>
+    /// Default implementation of IPropertyAnalyzer to analyzes certain inputs (e.g., expressions and objects) and look for properties to be registered in the memento.
+    /// </summary>
+    public class PropertyAnalyzer : IPropertyAnalyzer
     {
+        public delegate bool PropertyFilter(MementoClassAttribute mementoClassAttr, PropertyInfo pi, IList<Attribute> propertyAttrs);
+        private static readonly PropertyFilter DefaultFilter = (mementoClassAttr, pi, propertyAttrs) =>
+                mementoClassAttr != null ?
+                        propertyAttrs.Any(attr => attr is MementoPropertyAttribute) && pi.HasGetAndSet()
+                        : propertyAttrs.Any(attr => attr is MementoPropertyAttribute);
+
+        PropertyFilter Filter { get; }
+
+        /// <summary>
+        /// Initializes PropertyAnalizer with given filter
+        /// </summary>
+        /// <param name="filter">Property selection filter</param>
+        public PropertyAnalyzer(PropertyFilter filter)
+        {
+            Filter = filter;
+        }
+
+        /// <summary>
+        /// Initializes PropertyAnalizer with default filter
+        /// </summary>
+        public PropertyAnalyzer() : this(DefaultFilter)
+        {
+
+        }
+
+        /// <summary>
+        /// Gets property adapters for the properties given an expression 
+        /// </summary>
+        /// <typeparam name="TOwner">Owner class type</typeparam>
+        /// <typeparam name="TProperty">Property type</typeparam>
+        /// <param name="expression">Expression returning property to be analyzed</param>
+        /// <returns>Property adapters </returns>
         public IList<IPropertyAdapter> GetProperties<TOwner, TProperty>(Expression<Func<TOwner, TProperty>> expression)
         {
             return GetProperties(expression.Body, true);
         }
 
+        /// <summary>
+        /// Gets property adapters for the properties given an expression 
+        /// </summary>
+        /// <typeparam name="TProperty">Property type</typeparam>
+        /// <param name="expression">Expression returning property to be analyzed</param>
+        /// <returns>Property adapters </returns>
         public IList<IPropertyAdapter> GetProperties<TProperty>(Expression<Func<TProperty>> expression)
         {
             return GetProperties(expression.Body, false);
@@ -98,40 +139,27 @@ namespace MementoContainer.Analysis
             }
         }
 
-        public IList<IPropertyData> GetProperties(object obj)
+        /// <summary>
+        /// Gets data for all the properties in a given object which match the requisites
+        /// </summary>
+        /// <param name="obj">Object to analyze</param>
+        /// <returns>Property data of the selected properties</returns>
+        public virtual IList<IPropertyData> GetProperties(object obj)
         {
             Type type = obj.GetType();
+            MementoClassAttribute mementoClassAttr = type.GetTypeInfo().GetCustomAttribute<MementoClassAttribute>();
             IDictionary<PropertyInfo, IList<Attribute>> attributesMap = type.GetFullAttributesMap();
 
-            //check if type has MementoClassAttribute
-            if (type.IsMementoClass())
-            {
-                var typeInfo = type.GetTypeInfo();
-                var mementoClassAttr = typeInfo.GetCustomAttribute<MementoClassAttribute>();
-
-                return attributesMap
-                    .Where(kv => kv.Value.Any(attr => attr is MementoPropertyAttribute) || kv.Key.HasGetAndSet())
-                    .Select(kv => kv.Key)
-                    .Select(Validate)
-                    .Select(prop => new PropertyData(prop, obj, attributesMap[prop], mementoClassAttr))
-                    .Cast<IPropertyData>()
-                    .ToList();
-            }
-
             return attributesMap
-                .Where(kv => kv.Value.Any(attr => attr is MementoPropertyAttribute))
-                .Select(kv => kv.Key)
+                .Where(x => Filter(mementoClassAttr, x.Key, x.Value))
+                .Select(x => x.Key)
                 .Select(Validate)
-                .Select(prop => new PropertyData(prop, obj, attributesMap[prop]))
+                .Select(x => new PropertyData(x, obj, attributesMap[x], mementoClassAttr))
                 .Cast<IPropertyData>()
                 .ToList();
         }
 
-        /// <summary>
-        /// Wraps a property in an adapter
-        /// </summary>
-        /// <param name="property"></param>
-        /// <returns></returns>
+
         private IPropertyAdapter Wrap(PropertyInfo property)
         {
             return new PropertyInfoAdapter(property);
@@ -141,6 +169,7 @@ namespace MementoContainer.Analysis
         {
             if (!property.HasGetAndSet())
                 throw PropertyException.MissingAccessors(property);
+
             return property;
         }
 
@@ -152,12 +181,13 @@ namespace MementoContainer.Analysis
         private void Validate(IList<PropertyInfo> props)
         {
             var cantBeRead = props.FirstOrDefault(p => !p.CanRead);
+
             if (cantBeRead != null)
                 throw PropertyException.MissingGetAccessor(cantBeRead);
 
             var last = props.Last();
 
-            if(! last.CanWrite)
+            if(!last.CanWrite)
                 throw PropertyException.MissingSetAccessor(last);
         } 
     }
